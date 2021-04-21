@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/today_fragment"
+        android:icon="@drawable/ic_baseline_today_24"
+        android:title="@string/today" />
+
+    <item
+        android:id="@+id/record_activity"
+        android:icon="@drawable/ic_baseline_directions_run_24"
+        android:title="@string/record" />
+
+    <item
+        android:id="@+id/dashboard_fragment"
+        android:icon="@drawable/ic_baseline_dashboard_24"
+        android:title="@string/dashboard" />
+</menu>

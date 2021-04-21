@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
-import com.example.runlah.MainActivity
+import com.example.runlah.home.MainActivity
 import com.example.runlah.R
 import com.example.runlah.databinding.ActivityLoginBinding
 import com.google.android.material.snackbar.Snackbar
@@ -19,11 +19,16 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
 
+        auth = FirebaseAuth.getInstance()
+        if (auth.currentUser != null) {
+            Intent(this, MainActivity::class.java).also {  intent ->
+                startActivity(intent)
+            }
+        }
         // hide action bar
         if (supportActionBar != null)
             this.supportActionBar?.hide()
 //        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        auth = FirebaseAuth.getInstance()
 
         binding.btnLogin.setOnClickListener {
             val email = binding.loginEmailInput.text.toString()
