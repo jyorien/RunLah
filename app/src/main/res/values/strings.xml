@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">RunLah</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="navigate_to_signup_text">No account? Sign up here!</string>
+    <string name="navigate_to_login_text">Have an account? Log in here!</string>
+</resources>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "345768625554",
+    "project_id": "runlah",
+    "storage_bucket": "runlah.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345768625554:android:31d9e9e03fcd078979ad4b",
+        "android_client_info": {
+          "package_name": "com.example.runlah"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "345768625554-7gs5b5n5orcefkls5t6sr2pn65t8ajlk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKFDsH71SbTnXrtey6XGqEd79UKLmUBV0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "345768625554-7gs5b5n5orcefkls5t6sr2pn65t8ajlk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="login_signup_text">
+        <item name="android:textSize">60sp</item>
+        <item name="android:layout_marginTop">64dp</item>
+    </style>
+
+    <style name="email_input_margin">
+        <item name="android:layout_marginHorizontal">48dp</item>
+        <item name="android:layout_marginBottom">256dp</item>
+    </style>
+</resources>
