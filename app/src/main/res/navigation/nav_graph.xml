@@ -9,11 +9,7 @@
         android:id="@+id/today_fragment"
         android:name="com.example.runlah.home.TodayFragment"
         android:label="fragment_today"
-        tools:layout="@layout/fragment_today" >
-        <action
-            android:id="@+id/action_today_fragment_to_dashboard_fragment"
-            app:destination="@id/dashboard_fragment" />
-    </fragment>
+        tools:layout="@layout/fragment_today"></fragment>
     <fragment
         android:id="@+id/dashboard_fragment"
         android:name="com.example.runlah.dashboard.DashboardFragment"
@@ -23,5 +19,33 @@
         android:id="@+id/record_fragment"
         android:name="com.example.runlah.record.RecordFragment"
         android:label="fragment_record"
-        tools:layout="@layout/fragment_record" />
+        tools:layout="@layout/fragment_record">
+        <action
+            android:id="@+id/action_record_fragment_to_resultsFragment"
+            app:destination="@id/resultsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/resultsFragment"
+        android:name="com.example.runlah.record.ResultsFragment"
+        android:label="fragment_results"
+        tools:layout="@layout/fragment_results">
+        <argument
+            android:name="start_latitude"
+            android:defaultValue="0.0"
+            app:argType="float" />
+        <argument
+            android:name="start_longitude"
+            android:defaultValue="0.0"
+            app:argType="float" />
+        <argument
+            android:name="end_latitude"
+            android:defaultValue="0.0"
+            app:argType="float" />
+        <argument
+            android:name="end_longitude"
+            android:defaultValue="0.0"
+            app:argType="float" />
+    </fragment>
 </navigation>
