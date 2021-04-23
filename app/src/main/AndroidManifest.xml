@@ -15,7 +15,7 @@
         android:theme="@style/Theme.RunLah">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDurdlFm_cATkS-WOq_koJ6zOuDvAxfXC8"/>
+            android:value=""/>
 
         <activity android:name=".home.MainActivity" />
         <activity android:name=".login.SignUpActivity" />
