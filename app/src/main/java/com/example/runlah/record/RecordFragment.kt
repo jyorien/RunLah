@@ -30,6 +30,8 @@ class RecordFragment : Fragment() {
     private lateinit var binding: FragmentRecordBinding
     private lateinit var map: GoogleMap
     private lateinit var client: FusedLocationProviderClient
+    private var currentLatitude = 0.0
+    private var currentLongitude = 0.0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,13 +47,10 @@ class RecordFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_record, container, false)
         client = LocationServices.getFusedLocationProviderClient(requireActivity())
-
         val supportMapFragment =
             childFragmentManager.findFragmentById(R.id.google_maps) as SupportMapFragment
         supportMapFragment.getMapAsync { googleMap ->
             map = googleMap
-//            val latitude = 1.3715
-//            val longitude = 103.9633
 //            val homeLatLng = LatLng(lat, lng)
 //            val zoomLevel = 15F
 //
@@ -77,26 +76,40 @@ class RecordFragment : Fragment() {
     }
 
     private fun requestLocationPermission() {
-        if (ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            map.isMyLocationEnabled = true
+        if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            getLastLocation()
         }
         else {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST)
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST)
         }
     }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
             if (grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
-                map.isMyLocationEnabled = true
+                getLastLocation()
             }
             else {
                 Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLastLocation() {
+        map.isMyLocationEnabled = true
+        client.lastLocation.addOnSuccessListener {
+            currentLatitude = it.latitude
+            currentLongitude = it.longitude
+            val coordinates = LatLng(currentLatitude, currentLongitude)
+            val zoomLevel = 15F
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, zoomLevel))
         }
     }
 }
