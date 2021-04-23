@@ -16,7 +16,12 @@
     </fragment>
     <fragment
         android:id="@+id/dashboard_fragment"
-        android:name="com.example.runlah.record.DashboardFragment"
+        android:name="com.example.runlah.dashboard.DashboardFragment"
         android:label="fragment_dashboard"
         tools:layout="@layout/fragment_dashboard" />
+    <fragment
+        android:id="@+id/record_fragment"
+        android:name="com.example.runlah.record.RecordFragment"
+        android:label="fragment_record"
+        tools:layout="@layout/fragment_record" />
 </navigation>

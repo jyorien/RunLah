@@ -1,4 +1,4 @@
-package com.example.runlah.record
+package com.example.runlah.dashboard
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

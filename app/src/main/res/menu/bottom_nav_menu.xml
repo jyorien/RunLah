@@ -6,7 +6,7 @@
         android:title="@string/today" />
 
     <item
-        android:id="@+id/record_activity"
+        android:id="@+id/record_fragment"
         android:icon="@drawable/ic_baseline_directions_run_24"
         android:title="@string/record" />
 
