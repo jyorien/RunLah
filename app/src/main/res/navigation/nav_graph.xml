@@ -9,7 +9,7 @@
         android:id="@+id/today_fragment"
         android:name="com.example.runlah.home.TodayFragment"
         android:label="fragment_today"
-        tools:layout="@layout/fragment_today"></fragment>
+        tools:layout="@layout/fragment_today" />
     <fragment
         android:id="@+id/dashboard_fragment"
         android:name="com.example.runlah.dashboard.DashboardFragment"
@@ -32,20 +32,7 @@
         android:label="fragment_results"
         tools:layout="@layout/fragment_results">
         <argument
-            android:name="start_latitude"
-            android:defaultValue="0.0"
-            app:argType="float" />
-        <argument
-            android:name="start_longitude"
-            android:defaultValue="0.0"
-            app:argType="float" />
-        <argument
-            android:name="end_latitude"
-            android:defaultValue="0.0"
-            app:argType="float" />
-        <argument
-            android:name="end_longitude"
-            android:defaultValue="0.0"
-            app:argType="float" />
+            android:name="latlng_list"
+            app:argType="float[]" />
     </fragment>
 </navigation>

@@ -45,27 +45,12 @@ class RecordFragment : Fragment() {
 
 
     private val latLngList = arrayListOf<LatLng>()
+    private val floatLatLngList = arrayListOf<Float>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun startTimer() {
-        val timerTask = object : TimerTask() {
-            override fun run() {
-                client.lastLocation.addOnSuccessListener {
-                    getLastLocation()
-                    val polyLineOptions = PolylineOptions().addAll(latLngList).clickable(true).color(ContextCompat.getColor(requireContext(),R.color.polyLineBlue))
-                    map.addPolyline(polyLineOptions)
-                    Log.i("HELLO", "${it.latitude} ${it.longitude}")
-
-                }
-            }
-        }
-        timer.schedule(timerTask, 2500, 2500)
     }
 
     override fun onCreateView(
@@ -89,11 +74,12 @@ class RecordFragment : Fragment() {
                     startTimer()
                     binding.btnStartStop.text = "STOP"
                     isStarted = true
-                }
-                else {
+                } else {
                     timer.cancel()
-
-                    val action = RecordFragmentDirections.actionRecordFragmentToResultsFragment(latLngList.first().latitude.toFloat(), latLngList.first().longitude.toFloat(), latLngList.last().latitude.toFloat(), latLngList.last().longitude.toFloat() )
+                    // send coordinates list to results page
+                    val action = RecordFragmentDirections.actionRecordFragmentToResultsFragment(
+                        floatLatLngList.toFloatArray()
+                    )
                     findNavController().navigate(action)
                 }
 
@@ -104,12 +90,18 @@ class RecordFragment : Fragment() {
     }
 
     private fun requestLocationPermission() {
-        if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             map.isMyLocationEnabled = true
             getLastLocation()
-        }
-        else {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST)
+        } else {
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST
+            )
         }
     }
 
@@ -125,8 +117,7 @@ class RecordFragment : Fragment() {
             if (grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
                 map.isMyLocationEnabled = true
                 getLastLocation()
-            }
-            else {
+            } else {
                 Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
             }
         }
@@ -138,10 +129,29 @@ class RecordFragment : Fragment() {
             currentLatitude = it.latitude
             currentLongitude = it.longitude
             coordinates = LatLng(currentLatitude, currentLongitude)
+            floatLatLngList.add(currentLatitude.toFloat())
+            floatLatLngList.add(currentLongitude.toFloat())
             latLngList.add(coordinates)
             val zoomLevel = 15F
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, zoomLevel))
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startTimer() {
+        val timerTask = object : TimerTask() {
+            override fun run() {
+                client.lastLocation.addOnSuccessListener {
+                    getLastLocation()
+                    val polyLineOptions = PolylineOptions().addAll(latLngList).clickable(true)
+                        .color(ContextCompat.getColor(requireContext(), R.color.polyLineBlue))
+                    map.addPolyline(polyLineOptions)
+                    Log.i("HELLO", "${it.latitude} ${it.longitude}")
+
+                }
+            }
+        }
+        timer.schedule(timerTask, 2500, 2500)
     }
 
 }
