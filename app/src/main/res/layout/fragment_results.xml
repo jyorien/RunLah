@@ -8,9 +8,10 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+        android:layout_width="409dp"
         android:layout_height="match_parent"
-        tools:context=".record.ResultsFragment">
+        tools:context=".record.ResultsFragment"
+        tools:layout_editor_absoluteX="1dp">
 
         <fragment
             android:id="@+id/result_map"
@@ -27,36 +28,84 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
+            android:layout_marginTop="18dp"
             android:text="00:00"
             android:textSize="72sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/result_map" />
 
         <TextView
             android:id="@+id/final_steps_taken"
-            android:layout_width="wrap_content"
+            android:layout_width="135dp"
             android:layout_height="wrap_content"
-
-            android:layout_marginStart="52dp"
-            android:layout_marginTop="440dp"
-
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="2dp"
             android:text="0"
+            android:textAlignment="center"
             android:textSize="40sp"
+            app:layout_constraintEnd_toStartOf="@+id/final_distance_travelled"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/final_time_taken" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/textView9"
+            android:layout_width="135dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/final_steps_taken"
-            android:layout_marginBottom="188dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="2dp"
             android:text="@string/steps"
+            android:textAlignment="center"
             android:textSize="30sp"
+            app:layout_constraintEnd_toStartOf="@+id/textView6"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/final_steps_taken" />
 
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/final_steps_taken"
-            app:layout_constraintStart_toStartOf="@+id/final_steps_taken" />
+        <TextView
+            android:id="@+id/average_speed"
+            android:layout_width="135dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="0.00"
+            android:textAlignment="center"
+            android:textSize="40sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/final_time_taken" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="135dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="m/s"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/average_speed" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="135dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="2dp"
+            android:text="km"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toStartOf="@+id/textView5"
+            app:layout_constraintTop_toBottomOf="@+id/final_distance_travelled" />
+
+        <TextView
+            android:id="@+id/final_distance_travelled"
+            android:layout_width="135dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="2dp"
+            android:text="0.0"
+            android:textAlignment="center"
+            android:textSize="40sp"
+            app:layout_constraintEnd_toStartOf="@+id/average_speed"
+            app:layout_constraintTop_toBottomOf="@+id/final_time_taken" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -42,5 +42,9 @@
             android:name="step_count"
             app:argType="float"
             android:defaultValue="0.0" />
+        <argument
+            android:name="average_speed"
+            app:argType="float"
+            android:defaultValue="0.0" />
     </fragment>
 </navigation>

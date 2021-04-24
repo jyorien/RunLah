@@ -37,6 +37,8 @@ class ResultsFragment : Fragment() {
 
         binding.finalTimeTaken.text = args.timeTaken
         binding.finalStepsTaken.text = args.stepCount.toString()
+        Log.i("HELLO", args.averageSpeed.toString())
+        binding.averageSpeed.text = String.format("%.2f", args.averageSpeed)
         val latLngArray = arrayListOf<LatLng>()
         for (i in 0..args.latlngList.size-2 step 2) {
             // format floatarray into latlngarray
@@ -67,7 +69,7 @@ class ResultsFragment : Fragment() {
                 ContextCompat.getColor(requireContext(),R.color.polyLineBlue))
             map.addPolyline(polyLineOptions)
             // pan camera
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(startCoordinates,15F))
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(endCoordinates, zoomLevel))
         }
 
         return binding.root

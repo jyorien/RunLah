@@ -32,7 +32,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
 import java.lang.NullPointerException
 import java.util.*
-
+val zoomLevel = 20F
 class RecordFragment : Fragment(), SensorEventListener {
     private val MULTIPLE_PERMISSION_REQUEST = 1
     private lateinit var binding: FragmentRecordBinding
@@ -41,24 +41,23 @@ class RecordFragment : Fragment(), SensorEventListener {
     private var currentLatitude = 0.0
     private var currentLongitude = 0.0
     private lateinit var coordinates: LatLng
-    val timer = Timer()
+//    val timer = Timer()
     private var isStarted = false
-    val zoomLevel = 15F
     private lateinit var stepCounterSensor: Sensor
     private lateinit var sensorManager: SensorManager
 
     // step count since system reboot
     private var totalStepCount = 0F
-
     // step count when 'start' button clicked
     private var startStepCount = 0F
-
     // total step count for the session
     private var sessionStepCount = 0F
         get() = totalStepCount - startStepCount
+
     private lateinit var locationRequest: LocationRequest
     private val latLngList = arrayListOf<LatLng>()
     private val floatLatLngList = arrayListOf<Float>()
+    private val speedList = arrayListOf<Float>()
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
@@ -75,6 +74,11 @@ class RecordFragment : Fragment(), SensorEventListener {
                     floatLatLngList.add(currentLatitude.toFloat())
                     floatLatLngList.add(currentLongitude.toFloat())
                     latLngList.add(coordinates)
+
+                    // populate list to keep track of speed
+                    val currentSpeed = location.speed
+                    speedList.add(currentSpeed)
+                    binding.currentSpeed.text = String.format("%.2f", currentSpeed)
 
                     // draw user's path with polyline
                     val polyLineOptions = PolylineOptions().addAll(latLngList).clickable(true)
@@ -125,14 +129,20 @@ class RecordFragment : Fragment(), SensorEventListener {
                 }
 
             } else {
-                timer.cancel()
+//                timer.cancel()
                 binding.chronometer.stop()
                 stopLocationUpdates()
+                var averageSpeed = 0.0
+                speedList.forEach { speed ->
+                    averageSpeed+=speed
+                }
+                averageSpeed /= speedList.size
                 // send data to results page
                 val action = RecordFragmentDirections.actionRecordFragmentToResultsFragment(
                     floatLatLngList.toFloatArray(),
                     binding.chronometer.text.toString(),
-                    sessionStepCount
+                    sessionStepCount,
+                    averageSpeed.toFloat()
                 )
                 findNavController().navigate(action)
             }
