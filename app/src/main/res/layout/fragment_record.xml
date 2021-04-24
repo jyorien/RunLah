@@ -13,7 +13,7 @@
 
         <fragment
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="350dp"
             android:id="@+id/google_maps"
             android:layout_gravity="bottom"
             android:name="com.google.android.gms.maps.SupportMapFragment" />
@@ -25,6 +25,33 @@
             android:layout_gravity="bottom|center"
             android:layout_marginBottom="80dp"
             android:text="START" />
+
+        <Chronometer
+            android:id="@+id/chronometer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="72sp"
+            android:layout_marginTop="40dp"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/stepCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="40sp"
+            android:layout_marginStart="40dp"
+            android:layout_marginBottom="106dp"
+            android:layout_gravity="center_vertical"
+            android:text="0" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/steps"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="18dp"
+            android:layout_marginBottom="60dp"
+            android:textSize="30sp"/>
 
 
     </FrameLayout>

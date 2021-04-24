@@ -4,22 +4,22 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationManager
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.SystemClock
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.example.runlah.R
 import com.example.runlah.databinding.FragmentRecordBinding
 import com.google.android.gms.location.*
@@ -27,13 +27,12 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import java.lang.NullPointerException
 import java.util.*
 
-class RecordFragment : Fragment() {
-    private val LOCATION_PERMISSION_REQUEST = 1
+class RecordFragment : Fragment(), SensorEventListener {
+    private val MULTIPLE_PERMISSION_REQUEST = 1
     private lateinit var binding: FragmentRecordBinding
     private lateinit var map: GoogleMap
     private lateinit var client: FusedLocationProviderClient
@@ -42,6 +41,15 @@ class RecordFragment : Fragment() {
     private lateinit var coordinates: LatLng
     val timer = Timer()
     private var isStarted = false
+    private lateinit var stepCounterSensor: Sensor
+    private lateinit var sensorManager: SensorManager
+    // step count since system reboot
+    private var totalStepCount = 0F
+    // step count when 'start' button clicked
+    private var startStepCount = 0F
+    // total step count for the session
+    private var sessionStepCount = 0F
+        get() = totalStepCount - startStepCount
 
 
     private val latLngList = arrayListOf<LatLng>()
@@ -50,6 +58,8 @@ class RecordFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
     }
 
@@ -65,42 +75,62 @@ class RecordFragment : Fragment() {
         supportMapFragment.getMapAsync { googleMap ->
             // on map ready
             map = googleMap
-            requestLocationPermission()
-//            latLngList.add(LatLng(1.315,103.9633))
-//            val polyLineOptions = PolylineOptions().addAll(latLngList).clickable(true).color(ContextCompat.getColor(requireContext(),R.color.polyLineBlue))
-//            map.addPolyline(polyLineOptions)
-            binding.btnStartStop.setOnClickListener {
-                if (!isStarted) {
-                    startTimer()
-                    binding.btnStartStop.text = "STOP"
+            requestPermissions()
+        }
+
+        binding.btnStartStop.setOnClickListener {
+            if (!isStarted) {
+                startTimer()
+                binding.apply {
+                    btnStartStop.text = "STOP"
+                    startStepCount = totalStepCount
+                    chronometer.base = SystemClock.elapsedRealtime()
+                    chronometer.start()
                     isStarted = true
-                } else {
-                    timer.cancel()
-                    // send coordinates list to results page
-                    val action = RecordFragmentDirections.actionRecordFragmentToResultsFragment(
-                        floatLatLngList.toFloatArray()
-                    )
-                    findNavController().navigate(action)
                 }
 
+            } else {
+                timer.cancel()
+                binding.chronometer.stop()
+                // send data to results page
+
+                val action = RecordFragmentDirections.actionRecordFragmentToResultsFragment(
+                    floatLatLngList.toFloatArray(), binding.chronometer.text.toString(), sessionStepCount
+                )
+                findNavController().navigate(action)
             }
+
         }
 
         return binding.root
     }
 
-    private fun requestLocationPermission() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+    }
+
+    private fun requestPermissions() {
         if (ContextCompat.checkSelfPermission(
                 requireActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.ACTIVITY_RECOGNITION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+            registerStepTrackerListener()
             map.isMyLocationEnabled = true
             getLastLocation()
         } else {
+            // API Level 28 (Android Pie) and below auto grants activity recognition permission so no pop up.
             requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST
+                arrayOf(
+                    Manifest.permission.ACTIVITY_RECOGNITION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ),
+                MULTIPLE_PERMISSION_REQUEST
             )
         }
     }
@@ -113,14 +143,16 @@ class RecordFragment : Fragment() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_PERMISSION_REQUEST) {
+        if (requestCode == MULTIPLE_PERMISSION_REQUEST) {
             if (grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
+                registerStepTrackerListener()
                 map.isMyLocationEnabled = true
                 getLastLocation()
             } else {
                 Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
     @SuppressLint("MissingPermission")
@@ -153,5 +185,38 @@ class RecordFragment : Fragment() {
         }
         timer.schedule(timerTask, 2500, 2500)
     }
+    private fun registerStepTrackerListener() {
+        try {
+            stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+            stepCounterSensor.let {
+                sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_FASTEST)
+            }
+        } catch (e: NullPointerException) {
+            Log.i("HELLO",e.toString())
+        }
+
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        event ?: return
+        // first value in SensorEvent is step count
+        event.values.firstOrNull().let {
+            Log.i("HELLO", "step count $it")
+            if (it != null)
+                totalStepCount = it
+            if (isStarted)
+                binding.stepCount.text = sessionStepCount.toString()
+
+        }
+
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        if (sensor != null) {
+            Log.i("HELLO", "accuracy: $accuracy")
+        }
+    }
+
+
 
 }

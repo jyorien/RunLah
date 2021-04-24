@@ -35,6 +35,8 @@ class ResultsFragment : Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_results, container, false)
 
+        binding.finalTimeTaken.text = args.timeTaken
+        binding.finalStepsTaken.text = args.stepCount.toString()
         val latLngArray = arrayListOf<LatLng>()
         for (i in 0..args.latlngList.size-2 step 2) {
             // format floatarray into latlngarray

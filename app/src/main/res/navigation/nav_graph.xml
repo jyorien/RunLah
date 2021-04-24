@@ -34,5 +34,13 @@
         <argument
             android:name="latlng_list"
             app:argType="float[]" />
+        <argument
+            android:name="time_taken"
+            app:argType="string"
+            android:defaultValue="00:00" />
+        <argument
+            android:name="step_count"
+            app:argType="float"
+            android:defaultValue="0.0" />
     </fragment>
 </navigation>
