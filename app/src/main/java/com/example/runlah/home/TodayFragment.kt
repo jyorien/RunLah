@@ -35,6 +35,7 @@ class TodayFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
         return inflater.inflate(R.layout.fragment_today, container, false)
     }
 

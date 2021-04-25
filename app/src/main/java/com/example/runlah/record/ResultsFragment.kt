@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.runlah.R
 import com.example.runlah.databinding.FragmentResultsBinding
+import com.example.runlah.home.MainActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdate
@@ -42,6 +43,7 @@ class ResultsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_results, container, false)
+        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
         val latLngArray = arrayListOf<LatLng>()
         // get coordinates to mark on map
         for (i in 0..args.latlngList.size-2 step 2) {

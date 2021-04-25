@@ -13,17 +13,15 @@ import android.os.Bundle
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.runlah.R
 import com.example.runlah.databinding.FragmentRecordBinding
+import com.example.runlah.home.MainActivity
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -32,9 +30,11 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.lang.NullPointerException
 import java.util.*
+
+
 val zoomLevel = 20F
+
 class RecordFragment : Fragment(), SensorEventListener {
     private val MULTIPLE_PERMISSION_REQUEST = 1
     private lateinit var binding: FragmentRecordBinding
@@ -43,23 +43,28 @@ class RecordFragment : Fragment(), SensorEventListener {
     private var currentLatitude = 0.0
     private var currentLongitude = 0.0
     private lateinit var coordinates: LatLng
-//    val timer = Timer()
+
+    //    val timer = Timer()
     private var isStarted = false
     private lateinit var stepCounterSensor: Sensor
-    private lateinit var sensorManager: SensorManager
+    private var sensorManager: SensorManager? = null
 
     // step count since system reboot
     private var totalStepCount = 0F
+
     // step count when 'start' button clicked
     private var startStepCount = 0F
+
     // total step count for the session
     private var sessionStepCount = 0F
         get() = totalStepCount - startStepCount
 
     // total distance covered
     private var sessionDistance = 0F
+
     // store current location data
     private lateinit var currentLocation: Location
+    private fun isCurrentLocationInitialised(): Boolean = this::currentLocation.isInitialized
 
     private lateinit var locationRequest: LocationRequest
     private val latLngList = arrayListOf<LatLng>()
@@ -69,6 +74,15 @@ class RecordFragment : Fragment(), SensorEventListener {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
+            if (isCurrentLocationInitialised()) {
+                // load current location before user can start tracking
+                binding.btnStartStop.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.GONE
+            }
+            if (latLngList.size > 1) {
+                // must have 2 or more coordinates before user stops tracking
+                binding.btnStartStop.visibility = View.VISIBLE
+            }
             locationResult.locations.forEach { location ->
                 currentLatitude = location.latitude
                 currentLongitude = location.longitude
@@ -78,8 +92,8 @@ class RecordFragment : Fragment(), SensorEventListener {
                 // user starts running
                 if (isStarted) {
                     // distance from previous location to new location
-                    sessionDistance+= currentLocation.distanceTo(location)
-                    binding.distanceTravelled.text = String.format("%.2f", (sessionDistance/1000))
+                    sessionDistance += currentLocation.distanceTo(location)
+                    binding.distanceTravelled.text = String.format("%.2f", (sessionDistance / 1000))
                     // populate list to draw polyline
                     floatLatLngList.add(currentLatitude.toFloat())
                     floatLatLngList.add(currentLongitude.toFloat())
@@ -95,7 +109,6 @@ class RecordFragment : Fragment(), SensorEventListener {
                 }
                 // update curent location data
                 currentLocation = location
-
             }
 
         }
@@ -104,8 +117,11 @@ class RecordFragment : Fragment(), SensorEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
-        sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        if (requireContext().packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_STEP_COUNTER))
+            sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
         // ping every 4s
         locationRequest = LocationRequest.create()
         locationRequest.interval = 4000
@@ -120,6 +136,9 @@ class RecordFragment : Fragment(), SensorEventListener {
     ): View? {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_record, container, false)
+
+        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         client = LocationServices.getFusedLocationProviderClient(requireActivity())
         val supportMapFragment =
             childFragmentManager.findFragmentById(R.id.google_maps) as SupportMapFragment
@@ -132,6 +151,8 @@ class RecordFragment : Fragment(), SensorEventListener {
         binding.btnStartStop.setOnClickListener {
             if (!isStarted) {
                 isStarted = true
+                binding.btnStartStop.visibility = View.GONE
+                Toast.makeText(requireContext(), "Start running!", Toast.LENGTH_SHORT).show()
                 checkSettingsAndStartLocationUpdates()
 //                startTimer()
                 binding.apply {
@@ -147,7 +168,7 @@ class RecordFragment : Fragment(), SensorEventListener {
                 stopLocationUpdates()
                 var averageSpeed = 0.0
                 speedList.forEach { speed ->
-                    averageSpeed+=speed
+                    averageSpeed += speed
                 }
                 averageSpeed /= speedList.size
                 // send data to results page
@@ -241,12 +262,11 @@ class RecordFragment : Fragment(), SensorEventListener {
 
     private fun registerStepTrackerListener() {
         try {
-            stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+            stepCounterSensor = sensorManager!!.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
             stepCounterSensor.let {
-                sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_FASTEST)
+                sensorManager?.registerListener(this, it, SensorManager.SENSOR_DELAY_FASTEST)
             }
         } catch (e: NullPointerException) {
-            Log.e("HELLO", e.toString())
         }
 
     }
@@ -265,9 +285,16 @@ class RecordFragment : Fragment(), SensorEventListener {
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        if (sensor != null) {
-            Log.i("HELLO", "accuracy: $accuracy")
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                Toast.makeText(requireContext(), "hi", Toast.LENGTH_SHORT).show()
+            }
         }
+        return super.onOptionsItemSelected(item)
     }
 
     //    @SuppressLint("MissingPermission")

@@ -23,6 +23,7 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         if (auth.currentUser != null) {
             Intent(this, MainActivity::class.java).also { intent ->
+                finish()
                 startActivity(intent)
             }
         }
@@ -58,6 +59,7 @@ class LoginActivity : AppCompatActivity() {
                     .set(user)
                     .addOnSuccessListener {
                         Intent(this, MainActivity::class.java).also {
+                            finish()
                             startActivity(it)
                         }
                     }

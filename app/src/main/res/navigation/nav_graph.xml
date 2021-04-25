@@ -33,7 +33,7 @@
         tools:layout="@layout/fragment_results">
         <argument
             android:name="latlng_list"
-            app:argType="float[]" />
+            app:argType="float[]"/>
         <argument
             android:name="time_taken"
             app:argType="string"

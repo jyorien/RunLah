@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.runlah.R
+import com.example.runlah.home.MainActivity
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,6 +35,7 @@ class DashboardFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_dashboard, container, false)
     }
