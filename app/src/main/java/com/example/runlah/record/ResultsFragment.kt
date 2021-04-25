@@ -39,6 +39,7 @@ class ResultsFragment : Fragment() {
         binding.finalStepsTaken.text = args.stepCount.toString()
         Log.i("HELLO", args.averageSpeed.toString())
         binding.averageSpeed.text = String.format("%.2f", args.averageSpeed)
+        binding.finalDistanceTravelled.text = String.format("%.2f", (args.distanceTravelled/1000))
         val latLngArray = arrayListOf<LatLng>()
         for (i in 0..args.latlngList.size-2 step 2) {
             // format floatarray into latlngarray

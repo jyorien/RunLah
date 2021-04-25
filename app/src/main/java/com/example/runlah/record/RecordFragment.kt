@@ -8,6 +8,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.location.Location
 import android.os.Bundle
 import android.os.Looper
 import android.os.SystemClock
@@ -54,6 +55,11 @@ class RecordFragment : Fragment(), SensorEventListener {
     private var sessionStepCount = 0F
         get() = totalStepCount - startStepCount
 
+    // total distance covered
+    private var sessionDistance = 0F
+    // store current location data
+    private lateinit var currentLocation: Location
+
     private lateinit var locationRequest: LocationRequest
     private val latLngList = arrayListOf<LatLng>()
     private val floatLatLngList = arrayListOf<Float>()
@@ -68,23 +74,26 @@ class RecordFragment : Fragment(), SensorEventListener {
                 // update current location on map
                 coordinates = LatLng(currentLatitude, currentLongitude)
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, zoomLevel))
+                // user starts running
                 if (isStarted) {
-                    // user starts running
+                    // distance from previous location to new location
+                    sessionDistance+= currentLocation.distanceTo(location)
+                    binding.distanceTravelled.text = String.format("%.2f", (sessionDistance/1000))
                     // populate list to draw polyline
                     floatLatLngList.add(currentLatitude.toFloat())
                     floatLatLngList.add(currentLongitude.toFloat())
                     latLngList.add(coordinates)
-
                     // populate list to keep track of speed
                     val currentSpeed = location.speed
                     speedList.add(currentSpeed)
                     binding.currentSpeed.text = String.format("%.2f", currentSpeed)
-
                     // draw user's path with polyline
                     val polyLineOptions = PolylineOptions().addAll(latLngList).clickable(true)
                         .color(ContextCompat.getColor(requireContext(), R.color.polyLineBlue))
                     map.addPolyline(polyLineOptions)
                 }
+                // update curent location data
+                currentLocation = location
 
             }
 
@@ -95,8 +104,10 @@ class RecordFragment : Fragment(), SensorEventListener {
         super.onCreate(savedInstanceState)
         sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        // ping every 4s
         locationRequest = LocationRequest.create()
         locationRequest.interval = 4000
+        // can handle requests coming in 2s intervals
         locationRequest.fastestInterval = 2000
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
@@ -142,7 +153,8 @@ class RecordFragment : Fragment(), SensorEventListener {
                     floatLatLngList.toFloatArray(),
                     binding.chronometer.text.toString(),
                     sessionStepCount,
-                    averageSpeed.toFloat()
+                    averageSpeed.toFloat(),
+                    sessionDistance
                 )
                 findNavController().navigate(action)
             }
