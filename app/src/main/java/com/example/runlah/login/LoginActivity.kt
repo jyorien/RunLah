@@ -10,6 +10,7 @@ import com.example.runlah.R
 import com.example.runlah.databinding.ActivityLoginBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
     lateinit var binding: ActivityLoginBinding
@@ -21,7 +22,7 @@ class LoginActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
         if (auth.currentUser != null) {
-            Intent(this, MainActivity::class.java).also {  intent ->
+            Intent(this, MainActivity::class.java).also { intent ->
                 startActivity(intent)
             }
         }
@@ -45,15 +46,25 @@ class LoginActivity : AppCompatActivity() {
 
     private fun login(email: String, password: String) {
         binding.progressBar2.visibility = View.VISIBLE
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {  task ->
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             binding.progressBar2.visibility = View.GONE
             if (task.isSuccessful) {
-                Intent(this, MainActivity::class.java).also {
-                    startActivity(it)
-                }
-            }
-            else
-                Snackbar.make(binding.root, "${task.exception?.message}", Snackbar.LENGTH_LONG).show()
+                val firestore = FirebaseFirestore.getInstance()
+                val user = hashMapOf(
+                    "userId" to auth.currentUser?.uid
+                )
+                firestore.collection("users")
+                    .document(auth.currentUser?.uid!!)
+                    .set(user)
+                    .addOnSuccessListener {
+                        Intent(this, MainActivity::class.java).also {
+                            startActivity(it)
+                        }
+                    }
+
+            } else
+                Snackbar.make(binding.root, "${task.exception?.message}", Snackbar.LENGTH_LONG)
+                    .show()
         }
     }
 }
