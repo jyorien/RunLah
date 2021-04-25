@@ -30,7 +30,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="18dp"
             android:text="00:00"
-            android:textSize="72sp"
+            android:textSize="64sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/result_map" />
@@ -107,5 +107,18 @@
             android:textSize="40sp"
             app:layout_constraintEnd_toStartOf="@+id/average_speed"
             app:layout_constraintTop_toBottomOf="@+id/final_time_taken" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="101dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginBottom="96dp"
+
+            android:src="@drawable/ic_baseline_navigate_next_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView5" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

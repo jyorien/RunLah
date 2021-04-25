@@ -50,5 +50,8 @@
             android:name="distance_travelled"
             app:argType="float"
             android:defaultValue="0.0" />
+        <action
+            android:id="@+id/action_resultsFragment_to_today_fragment"
+            app:destination="@id/today_fragment" />
     </fragment>
 </navigation>
