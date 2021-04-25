@@ -46,9 +46,9 @@ class ResultsFragment : Fragment() {
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
         val latLngArray = arrayListOf<LatLng>()
         // get coordinates to mark on map
-        for (i in 0..args.latlngList.size-2 step 2) {
+        for (i in 0..args.latlngList.size - 2 step 2) {
             // format floatarray into latlngarray
-            val latLng = LatLng(args.latlngList[i].toDouble(), args.latlngList[i+1].toDouble())
+            val latLng = LatLng(args.latlngList[i].toDouble(), args.latlngList[i + 1].toDouble())
             latLngArray.add(latLng)
         }
         val timeTaken = args.timeTaken
@@ -64,7 +64,7 @@ class ResultsFragment : Fragment() {
         binding.finalTimeTaken.text = timeTaken
         binding.finalStepsTaken.text = stepCount.toString()
         binding.averageSpeed.text = String.format("%.2f", averageSpeed)
-        binding.finalDistanceTravelled.text = String.format("%.2f", (distanceTravelled/1000))
+        binding.finalDistanceTravelled.text = String.format("%.2f", (distanceTravelled / 1000))
 
 
         val supportMapFragment =
@@ -86,7 +86,8 @@ class ResultsFragment : Fragment() {
             map.addMarker(endMarkerOptions)
             // draw route
             val polyLineOptions = PolylineOptions().addAll(latLngArray).clickable(true).color(
-                ContextCompat.getColor(requireContext(),R.color.polyLineBlue))
+                ContextCompat.getColor(requireContext(), R.color.polyLineBlue)
+            )
             map.addPolyline(polyLineOptions)
             // pan camera
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(endCoordinates, zoomLevel))
@@ -105,8 +106,11 @@ class ResultsFragment : Fragment() {
                     "endLat" to endLat,
                     "endLng" to endLng
                 )
-                firestore.collection("users").document(auth.uid!!).collection("records").add(sessionData).addOnSuccessListener {
-                    requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.VISIBLE
+                firestore.collection("users").document(auth.uid!!).collection("records").document(
+                    UUID.randomUUID().toString()
+                ).set(sessionData).addOnSuccessListener {
+                    requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility =
+                        View.VISIBLE
                     findNavController().navigate(R.id.action_resultsFragment_to_today_fragment)
                 }
             }
