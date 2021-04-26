@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.runlah.R
 import com.example.runlah.databinding.FragmentDashboardBinding
 import com.example.runlah.home.MainActivity
@@ -22,10 +23,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class DashboardFragment : Fragment() {
-    val records = arrayListOf(
-        Record("26/4/2021", "5 km", "60 min", "5 m/s", "300 steps"),
-        Record("26/4/2021", "5 km", "60 min", "5 m/s", "300 steps")
-    )
     private lateinit var auth: FirebaseAuth
     private lateinit var recordList: ArrayList<Record>
 
@@ -100,8 +97,9 @@ class DashboardFragment : Fragment() {
                     recordList.add(record)
 
                 }
-                binding.historyList.adapter = HistoryListAdapter(recordList) {
-                    Toast.makeText(requireContext(), "clicked", Toast.LENGTH_SHORT).show()
+                binding.historyList.adapter = HistoryListAdapter(recordList) { record ->
+                    val action = DashboardFragmentDirections.actionDashboardFragmentToHistoryFragment(record)
+                    findNavController().navigate(action)
                 }
 
 

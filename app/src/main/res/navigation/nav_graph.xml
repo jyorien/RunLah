@@ -14,7 +14,12 @@
         android:id="@+id/dashboard_fragment"
         android:name="com.example.runlah.dashboard.DashboardFragment"
         android:label="fragment_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_dashboard" >
+        <action
+            android:id="@+id/action_dashboard_fragment_to_historyFragment"
+            app:destination="@id/history_fragment"
+            app:popUpTo="@id/dashboard_fragment" />
+    </fragment>
     <fragment
         android:id="@+id/record_fragment"
         android:name="com.example.runlah.record.RecordFragment"
@@ -53,5 +58,14 @@
         <action
             android:id="@+id/action_resultsFragment_to_today_fragment"
             app:destination="@id/today_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/history_fragment"
+        android:name="com.example.runlah.dashboard.HistoryFragment"
+        android:label="fragment_history"
+        tools:layout="@layout/fragment_history" >
+        <argument
+            android:name="record"
+            app:argType="com.example.runlah.dashboard.Record" />
     </fragment>
 </navigation>

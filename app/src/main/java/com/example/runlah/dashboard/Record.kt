@@ -1,5 +1,7 @@
 package com.example.runlah.dashboard
 
+import java.io.Serializable
+
 data class Record(
     val date: String,
     val distance: String = "0",
@@ -10,4 +12,4 @@ data class Record(
     val startLng: String = "",
     val endLat: String = "",
     val endLng: String = ""
-)
+): Serializable
