@@ -14,13 +14,17 @@ import androidx.navigation.fragment.findNavController
 import com.example.runlah.R
 import com.example.runlah.databinding.FragmentDashboardBinding
 import com.example.runlah.home.MainActivity
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.Query
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -30,8 +34,12 @@ import kotlin.collections.HashMap
 class DashboardFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var recordList: ArrayList<Record>
-
     private lateinit var binding: FragmentDashboardBinding
+    private val weeklyDistanceList = arrayListOf<Distance>()
+    private val weeklyTotalDistanceMap = hashMapOf<Int, Float>()
+    private lateinit var currentDate: LocalDateTime
+    private val xAxisValues = arrayListOf<Int>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
@@ -59,7 +67,8 @@ class DashboardFragment : Fragment() {
         recordList = arrayListOf()
         val docRef =
             firestore.collection("users").document(auth.currentUser!!.uid).collection("records")
-        docRef.orderBy("timestamp", Query.Direction.DESCENDING)
+        docRef
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot == null)
@@ -67,7 +76,6 @@ class DashboardFragment : Fragment() {
 
                 documentSnapshot.forEach { document ->
                     val docData = document.data
-                    Log.i("HELLO", docData["coordinatesArray"].toString())
                     val time = docData["timestamp"] as com.google.firebase.Timestamp
                     val formatter =
                         DateTimeFormatter.ofPattern("E MMM dd HH:mm:ss O uuuu", Locale.ENGLISH)
@@ -77,9 +85,14 @@ class DashboardFragment : Fragment() {
                     val displayDate = "${date.dayOfMonth} ${date.month} ${date.year} ${date.hour}:${minute}"
 
                     var distance = "${docData["distanceTravelled"]}"
+                    currentDate = LocalDateTime.now()
+                    if (date.isAfter(currentDate.minusDays(7))) {
+                        weeklyDistanceList.add(Distance(distance.toFloat(), date))
+                    }
                     if (distance == "null") distance = "0.00"
                     else distance = (distance.toFloat() / 1000).toString()
                     distance ="${String.format("%.2f", distance.toFloat())} km"
+
 
                     var timeTaken = "${docData["timeTaken"]}"
                     if (timeTaken == "null") timeTaken = "00:00"
@@ -108,6 +121,13 @@ class DashboardFragment : Fragment() {
                     recordList.add(record)
 
                 }
+                for (i in 6 downTo 0) {
+                    xAxisValues.add(currentDate.minusDays(i.toLong()).dayOfMonth)
+                }
+                populateWeeklyTotalDistanceMap()
+                val data = getChartData()
+                getChartAppearance()
+                prepareChartData(data)
                 binding.historyList.adapter = HistoryListAdapter(recordList) { record ->
                     val action = DashboardFragmentDirections.actionDashboardFragmentToHistoryFragment(record)
                     findNavController().navigate(action)
@@ -128,5 +148,60 @@ class DashboardFragment : Fragment() {
         return minute
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun populateWeeklyTotalDistanceMap() {
+        weeklyDistanceList.sortBy { it.date }
+
+        val groupedWeeklyDistanceList = weeklyDistanceList.groupBy {  it.date.dayOfMonth }
+        groupedWeeklyDistanceList.forEach { (key, value) ->
+            var totalDistance = 0.0F
+            value.forEach { distance ->
+                totalDistance+=distance.distance
+            }
+            weeklyTotalDistanceMap[key] = totalDistance/1000
+        }
+        Log.i("hello","map $weeklyTotalDistanceMap")
+
+    }
+
+    var MIN_X_VALUE = 0
+    var MAX_X_VALUE = 0
+    val label = "Distance (km)"
+    private fun getChartAppearance() {
+        binding.barChart.xAxis.valueFormatter = object: ValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                val index = (value % 7)
+                return xAxisValues[index.toInt()].toString()
+            }
+        }
+        binding.barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        binding.barChart.description.isEnabled = false
+        binding.barChart.axisLeft.granularity = 10f
+        binding.barChart.axisLeft.axisMinimum = 0f
+    }
+
+    private fun getChartData(): BarData {
+        val values = arrayListOf<BarEntry>()
+        MIN_X_VALUE = xAxisValues.first().toInt()
+        MAX_X_VALUE = xAxisValues.last().toInt()
+        for (i in MIN_X_VALUE..MAX_X_VALUE) {
+            var coordinates = BarEntry(i.toFloat(),0f)
+            if (weeklyTotalDistanceMap.keys.contains(i)) {
+                val y = weeklyTotalDistanceMap[i]
+                coordinates = BarEntry(i.toFloat(), y!!.toFloat())
+            }
+            values.add(coordinates)
+        }
+        val set1 = BarDataSet(values, label)
+        val datasets = arrayListOf<IBarDataSet>()
+        datasets.add(set1)
+        return BarData(datasets)
+    }
+    private fun prepareChartData(data: BarData) {
+        data.setValueTextSize(12f)
+        binding.barChart.data = data
+        binding.barChart.animateY(500)
+        binding.barChart.invalidate()
+    }
 
 }
