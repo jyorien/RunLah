@@ -136,7 +136,7 @@ class RecordFragment : Fragment(), SensorEventListener {
     ): View? {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_record, container, false)
-
+        (activity as MainActivity).supportActionBar!!.title = "Record new run"
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         client = LocationServices.getFusedLocationProviderClient(requireActivity())

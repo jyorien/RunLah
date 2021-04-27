@@ -43,6 +43,7 @@ class ResultsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_results, container, false)
+        (activity as MainActivity).supportActionBar!!.title = "Results"
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
         val latLngArray = arrayListOf<LatLng>()
         // get coordinates to mark on map

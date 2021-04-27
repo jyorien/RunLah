@@ -15,6 +15,7 @@ import com.example.runlah.R
 import com.example.runlah.databinding.FragmentDashboardBinding
 import com.example.runlah.home.MainActivity
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
@@ -43,7 +44,9 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // hide up button
+        (activity as MainActivity).supportActionBar!!.title = "Dashboard"
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.VISIBLE
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_dashboard, container, false)
         getHistoryData()
