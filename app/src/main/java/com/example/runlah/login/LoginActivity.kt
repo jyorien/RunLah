@@ -50,19 +50,10 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             binding.progressBar2.visibility = View.GONE
             if (task.isSuccessful) {
-                val firestore = FirebaseFirestore.getInstance()
-                val user = hashMapOf(
-                    "userId" to auth.currentUser?.uid
-                )
-                firestore.collection("users")
-                    .document(auth.currentUser?.uid!!)
-                    .set(user)
-                    .addOnSuccessListener {
-                        Intent(this, MainActivity::class.java).also {
-                            finish()
-                            startActivity(it)
-                        }
-                    }
+                Intent(this, MainActivity::class.java).also {
+                    finish()
+                    startActivity(it)
+                }
 
             } else
                 Snackbar.make(binding.root, "${task.exception?.message}", Snackbar.LENGTH_LONG)

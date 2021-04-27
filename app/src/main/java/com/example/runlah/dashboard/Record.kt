@@ -1,5 +1,6 @@
 package com.example.runlah.dashboard
 
+import com.google.android.gms.maps.model.LatLng
 import java.io.Serializable
 
 data class Record(
@@ -8,8 +9,5 @@ data class Record(
     val timeTaken: String = "0",
     val speed: String = "0",
     val steps: String = "0",
-    val startLat: String = "",
-    val startLng: String = "",
-    val endLat: String = "",
-    val endLng: String = ""
+    val latLngArray: ArrayList<LatLng> = arrayListOf()
 ): Serializable

@@ -101,10 +101,7 @@ class ResultsFragment : Fragment() {
                     "stepCount" to stepCount,
                     "averageSpeed" to averageSpeed,
                     "distanceTravelled" to distanceTravelled,
-                    "startLat" to startLat,
-                    "startLng" to startLng,
-                    "endLat" to endLat,
-                    "endLng" to endLng
+                    "coordinatesArray" to latLngArray
                 )
                 firestore.collection("users").document(auth.uid!!).collection("records").document(
                     UUID.randomUUID().toString()

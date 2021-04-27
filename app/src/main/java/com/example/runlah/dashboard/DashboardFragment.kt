@@ -14,13 +14,17 @@ import androidx.navigation.fragment.findNavController
 import com.example.runlah.R
 import com.example.runlah.databinding.FragmentDashboardBinding
 import com.example.runlah.home.MainActivity
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.Query
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class DashboardFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
@@ -60,7 +64,7 @@ class DashboardFragment : Fragment() {
 
                 documentSnapshot.forEach { document ->
                     val docData = document.data
-
+                    Log.i("HELLO", docData["coordinatesArray"].toString())
                     val time = docData["timestamp"] as com.google.firebase.Timestamp
                     val formatter =
                         DateTimeFormatter.ofPattern("E MMM dd HH:mm:ss O uuuu", Locale.ENGLISH)
@@ -81,6 +85,13 @@ class DashboardFragment : Fragment() {
                     if (speed == "null") speed = "0 m/s"
                     else speed = "${String.format("%.2f", speed.toFloat())} m/s"
 
+                    val coordinatesArray = docData["coordinatesArray"]
+                    // cast to arraylist so can iterate through
+                    val latLngArray = arrayListOf<LatLng>()
+                    (coordinatesArray as ArrayList<HashMap<String, Double>>).forEach { coordinates ->
+                        latLngArray.add(LatLng(coordinates["latitude"]!!, coordinates["longitude"]!!))
+                    }
+
                     var steps = "${(docData["stepCount"] as Double).toInt()} steps"
                     if (steps == "null steps") steps = "0 steps"
                     val record = Record(
@@ -89,10 +100,7 @@ class DashboardFragment : Fragment() {
                         timeTaken,
                         speed,
                         steps,
-                        docData["startLat"].toString(),
-                        docData["startLng"].toString(),
-                        docData["endLat"].toString(),
-                        docData["endLng"].toString()
+                        latLngArray
                     )
                     recordList.add(record)
 
