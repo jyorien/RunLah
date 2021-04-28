@@ -30,6 +30,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.math.roundToInt
 
 class DashboardFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
@@ -39,6 +40,8 @@ class DashboardFragment : Fragment() {
     private val weeklyTotalDistanceMap = hashMapOf<Int, Float>()
     private lateinit var currentDate: LocalDateTime
     private val xAxisValues = arrayListOf<Int>()
+    private var MIN_X_VALUE = 0
+    private var MAX_X_VALUE = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +60,7 @@ class DashboardFragment : Fragment() {
         requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.VISIBLE
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_dashboard, container, false)
+        currentDate = LocalDateTime.now()
         getHistoryData()
         return binding.root
     }
@@ -85,7 +89,7 @@ class DashboardFragment : Fragment() {
                     val displayDate = "${date.dayOfMonth} ${date.month} ${date.year} ${date.hour}:${minute}"
 
                     var distance = "${docData["distanceTravelled"]}"
-                    currentDate = LocalDateTime.now()
+
                     if (date.isAfter(currentDate.minusDays(7))) {
                         weeklyDistanceList.add(Distance(distance.toFloat(), date))
                     }
@@ -124,6 +128,7 @@ class DashboardFragment : Fragment() {
                 for (i in 6 downTo 0) {
                     xAxisValues.add(currentDate.minusDays(i.toLong()).dayOfMonth)
                 }
+                MIN_X_VALUE = xAxisValues[0]
                 populateWeeklyTotalDistanceMap()
                 val data = getChartData()
                 getChartAppearance()
@@ -158,21 +163,17 @@ class DashboardFragment : Fragment() {
             value.forEach { distance ->
                 totalDistance+=distance.distance
             }
-            weeklyTotalDistanceMap[key] = totalDistance/1000
+            weeklyTotalDistanceMap[key] = totalDistance
         }
         Log.i("hello","map $weeklyTotalDistanceMap")
 
     }
 
-    var MIN_X_VALUE = 0
-    var MAX_X_VALUE = 0
-    val label = "Distance (km)"
+    val label = "Distance (m)"
     private fun getChartAppearance() {
         binding.barChart.xAxis.valueFormatter = object: ValueFormatter() {
-            override fun getFormattedValue(value: Float): String {
-                val index = (value % 7)
-                return xAxisValues[index.toInt()].toString()
-            }
+            override fun getFormattedValue(value: Float): String = value.toInt().toString()
+
         }
         binding.barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         binding.barChart.description.isEnabled = false
@@ -188,7 +189,8 @@ class DashboardFragment : Fragment() {
             var coordinates = BarEntry(i.toFloat(),0f)
             if (weeklyTotalDistanceMap.keys.contains(i)) {
                 val y = weeklyTotalDistanceMap[i]
-                coordinates = BarEntry(i.toFloat(), y!!.toFloat())
+
+                coordinates = BarEntry(i.toFloat(), (y!!).roundToInt().toFloat())
             }
             values.add(coordinates)
         }
