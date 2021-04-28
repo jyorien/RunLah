@@ -127,6 +127,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/camera_circle"
             android:layout_marginTop="600dp"
+            android:layout_marginBottom="?attr/actionBarSize"
             android:src="@drawable/ic_baseline_camera_alt_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

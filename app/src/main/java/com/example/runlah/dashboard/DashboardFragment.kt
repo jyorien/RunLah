@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.runlah.R
 import com.example.runlah.databinding.FragmentDashboardBinding
 import com.example.runlah.home.MainActivity
+import com.example.runlah.util.DateUtil
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -22,6 +23,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -80,11 +82,8 @@ class DashboardFragment : Fragment() {
 
                 documentSnapshot.forEach { document ->
                     val docData = document.data
-                    val time = docData["timestamp"] as com.google.firebase.Timestamp
-                    val formatter =
-                        DateTimeFormatter.ofPattern("E MMM dd HH:mm:ss O uuuu", Locale.ENGLISH)
-                    // parse string to LocalDateTime object
-                    val date = LocalDateTime.parse(time.toDate().toString(), formatter)
+                    val time = docData["timestamp"] as Timestamp
+                    val date = DateUtil.getDateInLocalDateTime(time)
                     val minute = formatMinutes(date.minute.toString())
                     val displayDate = "${date.dayOfMonth} ${date.month} ${date.year} ${date.hour}:${minute}"
 

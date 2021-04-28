@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng
 import java.io.Serializable
 
 data class Record(
-    val date: String,
+    val date: String = "",
     val distance: String = "0",
     val timeTaken: String = "0",
     val speed: String = "0",
