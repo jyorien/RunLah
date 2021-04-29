@@ -25,8 +25,20 @@ class MainActivity : AppCompatActivity() {
         navigateToFragment()
         val orientationEventListener = object : OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
             override fun onOrientationChanged(orientation: Int) {
-                if (orientation in 151..199)
+                if (orientation in 141..229) {
                     Log.i("hello","upside down")
+                    binding.apply {
+                        blackOverlay.visibility = View.VISIBLE
+                        bottomNav.visibility = View.GONE
+                        supportActionBar!!.hide()
+                    }
+                } else {
+                    binding.apply {
+                        blackOverlay.visibility = View.GONE
+                        bottomNav.visibility = View.VISIBLE
+                        supportActionBar!!.show()
+                    }
+                }
             }
         }
         orientationEventListener.enable()
