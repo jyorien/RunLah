@@ -33,7 +33,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.util.*
 
 
-val zoomLevel = 20F
+const val zoomLevel = 20F
 
 class RecordFragment : Fragment(), SensorEventListener {
     private val MULTIPLE_PERMISSION_REQUEST = 1

@@ -47,15 +47,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="83dp"
-            android:layout_height="38dp"
-            android:layout_marginTop="87dp"
-            android:text="Button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/log_out" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

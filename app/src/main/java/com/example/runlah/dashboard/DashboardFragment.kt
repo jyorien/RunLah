@@ -52,7 +52,7 @@ class DashboardFragment : Fragment() {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -68,7 +68,6 @@ class DashboardFragment : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getHistoryData() {
         val firestore = FirebaseFirestore.getInstance()
         recordList = arrayListOf()
@@ -153,7 +152,7 @@ class DashboardFragment : Fragment() {
         return minute
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     private fun populateWeeklyTotalDistanceMap() {
         weeklyDistanceList.sortBy { it.date }
 

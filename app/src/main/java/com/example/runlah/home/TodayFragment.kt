@@ -51,13 +51,6 @@ class TodayFragment : Fragment() {
                 startActivity(intent)
             }
         }
-        binding.button.setOnClickListener {
-            if (AppCompatDelegate.MODE_NIGHT_NO == AppCompatDelegate.getDefaultNightMode())
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            else
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
-        }
         return binding.root
     }
 
