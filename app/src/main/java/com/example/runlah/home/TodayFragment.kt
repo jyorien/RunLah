@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import com.example.runlah.R
 import com.example.runlah.dashboard.Record
@@ -49,6 +50,13 @@ class TodayFragment : Fragment() {
             Intent(requireActivity(), LoginActivity::class.java).also { intent ->
                 startActivity(intent)
             }
+        }
+        binding.button.setOnClickListener {
+            if (AppCompatDelegate.MODE_NIGHT_NO == AppCompatDelegate.getDefaultNightMode())
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            else
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         }
         return binding.root
     }

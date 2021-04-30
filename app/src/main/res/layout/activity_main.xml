@@ -44,6 +44,7 @@
             app:layout_constraintEnd_toEndOf="@+id/host_fragment"
             app:layout_constraintStart_toStartOf="@+id/host_fragment"
             app:layout_constraintTop_toTopOf="parent"
+            android:elevation="8dp"
             android:visibility="gone"
             app:srcCompat="@drawable/black_overlay" />
 

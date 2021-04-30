@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         navigateToFragment()
         val orientationEventListener = object : OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
@@ -29,14 +30,13 @@ class MainActivity : AppCompatActivity() {
                     Log.i("hello","upside down")
                     binding.apply {
                         blackOverlay.visibility = View.VISIBLE
-                        bottomNav.visibility = View.GONE
                         supportActionBar!!.hide()
                     }
                 } else {
                     binding.apply {
                         blackOverlay.visibility = View.GONE
-                        bottomNav.visibility = View.VISIBLE
                         supportActionBar!!.show()
+//                        Log.i("hello","show bar")
                     }
                 }
             }
