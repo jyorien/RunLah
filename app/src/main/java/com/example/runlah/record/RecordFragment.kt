@@ -103,9 +103,11 @@ class RecordFragment : Fragment(), SensorEventListener {
                     speedList.add(currentSpeed)
                     binding.currentSpeed.text = String.format("%.2f", currentSpeed)
                     // draw user's path with polyline
-                    val polyLineOptions = PolylineOptions().addAll(latLngList).clickable(true)
-                        .color(ContextCompat.getColor(requireContext(), R.color.polyLineBlue))
-                    map.addPolyline(polyLineOptions)
+                    if (context != null) {
+                        val polyLineOptions = PolylineOptions().addAll(latLngList).clickable(true)
+                            .color(ContextCompat.getColor(requireContext(), R.color.polyLineBlue))
+                        map.addPolyline(polyLineOptions)
+                    }
                 }
                 // update curent location data
                 currentLocation = location
@@ -116,11 +118,11 @@ class RecordFragment : Fragment(), SensorEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        if (requireContext().packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_STEP_COUNTER))
-            sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+
 
         // ping every 4s
         locationRequest = LocationRequest.create()
@@ -138,6 +140,7 @@ class RecordFragment : Fragment(), SensorEventListener {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_record, container, false)
         (activity as MainActivity).supportActionBar!!.title = "New Run"
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
 
         client = LocationServices.getFusedLocationProviderClient(requireActivity())
         val supportMapFragment =

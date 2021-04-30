@@ -1,6 +1,12 @@
 package com.example.runlah.record
 
+import android.app.Activity.RESULT_OK
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -26,15 +33,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
 class ResultsFragment : Fragment() {
     private lateinit var binding: FragmentResultsBinding
+    private val REQUEST_IMAGE_CAPTURE = 1
     private val args: ResultsFragmentArgs by navArgs()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
 
     }
 
@@ -45,6 +54,7 @@ class ResultsFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_results, container, false)
         (activity as MainActivity).supportActionBar!!.title = "Results"
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
         val latLngArray = arrayListOf<LatLng>()
         // get coordinates to mark on map
         for (i in 0..args.latlngList.size - 2 step 2) {
@@ -94,6 +104,7 @@ class ResultsFragment : Fragment() {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(endCoordinates, zoomLevel))
 
             binding.fabNext.setOnClickListener {
+                val uuid = UUID.randomUUID().toString()
                 val firestore = FirebaseFirestore.getInstance()
                 val auth = FirebaseAuth.getInstance()
                 val sessionData = hashMapOf(
@@ -102,19 +113,69 @@ class ResultsFragment : Fragment() {
                     "stepCount" to stepCount,
                     "averageSpeed" to averageSpeed,
                     "distanceTravelled" to distanceTravelled,
-                    "coordinatesArray" to latLngArray
+                    "coordinatesArray" to latLngArray,
+                    "uuid" to uuid
                 )
                 firestore.collection("users").document(auth.uid!!).collection("records").document(
-                    UUID.randomUUID().toString()
+                    uuid
                 ).set(sessionData).addOnSuccessListener {
-                    requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility =
-                        View.VISIBLE
-                    findNavController().navigate(R.id.action_resultsFragment_to_today_fragment)
+                    if (binding.imageView.drawable != null) {
+                        val storage = FirebaseStorage.getInstance()
+                        val storageRef = storage.reference
+                        val imagesRef = storageRef.child(auth.currentUser!!.uid).child(uuid)
+                        val bitmap = (binding.imageView.drawable as BitmapDrawable).bitmap
+                        val baos = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                        val data = baos.toByteArray()
+                        val uploadTask = imagesRef.putBytes(data)
+                        uploadTask
+                            .addOnSuccessListener {
+                                Log.i("hello","upload SUCCESS")
+                                requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility =
+                                    View.VISIBLE
+                                findNavController().navigate(R.id.action_resultsFragment_to_today_fragment)
+                            }
+                            .addOnFailureListener {
+                                Log.i("hello",it.toString())
+                            }
+                    }
+                    else {
+                        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility =
+                            View.VISIBLE
+                        findNavController().navigate(R.id.action_resultsFragment_to_today_fragment)
+                    }
+
                 }
+
+
             }
+        }
+        binding.btnCamera.setOnClickListener {
+            dispatchTakePictureIntent()
         }
 
         return binding.root
+    }
+
+    private fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        } catch (e: ActivityNotFoundException) {
+            // display error state to the user
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            val imageBitmap = data!!.extras!!.get("data") as Bitmap
+            binding.apply {
+                btnCamera.visibility = View.GONE
+                imageView.visibility = View.VISIBLE
+                imageView.setImageBitmap(imageBitmap)
+
+            }
+        }
     }
 
 }

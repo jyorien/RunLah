@@ -9,5 +9,6 @@ data class Record(
     val timeTaken: String = "0",
     val speed: String = "0",
     val steps: String = "0",
-    val latLngArray: ArrayList<LatLng> = arrayListOf()
+    val latLngArray: ArrayList<LatLng> = arrayListOf(),
+    val uuid: String = "null"
 ): Serializable

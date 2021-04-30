@@ -75,7 +75,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event!!.sensor.type == Sensor.TYPE_LIGHT) {
-//            Log.i("hello", "LIGHT: ${event.values[0]}")
             val lightValue = event.values[0]
             if (lightValue < 30)
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

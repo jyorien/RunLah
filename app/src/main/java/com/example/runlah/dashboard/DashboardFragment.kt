@@ -113,13 +113,17 @@ class DashboardFragment : Fragment() {
 
                     var steps = "${(docData["stepCount"] as Double).toInt()} steps"
                     if (steps == "null steps") steps = "0 steps"
+
+                    val uuid = docData["uuid"].toString()
+                    Log.i("hello","uuid $uuid")
                     val record = Record(
                         displayDate,
                         distance,
                         timeTaken,
                         speed,
                         steps,
-                        latLngArray
+                        latLngArray,
+                        uuid
                     )
                     recordList.add(record)
 

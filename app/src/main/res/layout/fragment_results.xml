@@ -6,7 +6,9 @@
     <data>
 
     </data>
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="409dp"
         android:layout_height="match_parent"
@@ -112,12 +114,11 @@
             android:id="@+id/fab_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="101dp"
+            android:layout_marginTop="31dp"
             android:layout_marginEnd="40dp"
             android:layout_marginBottom="96dp"
 
             android:src="@drawable/ic_baseline_navigate_next_24"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
@@ -125,13 +126,24 @@
             android:id="@+id/btn_camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/camera_circle"
             android:layout_marginTop="600dp"
             android:layout_marginBottom="?attr/actionBarSize"
+            android:background="@drawable/camera_circle"
             android:src="@drawable/ic_baseline_camera_alt_24"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView6" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
+
 </layout>

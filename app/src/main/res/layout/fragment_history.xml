@@ -6,70 +6,88 @@
     <data>
 
     </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".dashboard.HistoryFragment">
+        android:layout_height="match_parent">
 
-        <fragment
-            android:id="@+id/history_map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent"
+            tools:context=".dashboard.HistoryFragment">
 
-        <TextView
-            android:id="@+id/history_display_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="85dp"
-            android:textSize="50sp"
-            android:textStyle="bold"
-            android:text="TextView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/history_map" />
+            <fragment
+                android:id="@+id/history_map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/history_display_time_taken"
-            android:layout_width="135dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="2dp"
-            android:textSize="30sp"
-            android:text="TextView"
-            android:textAlignment="center"
-            app:layout_constraintEnd_toStartOf="@+id/history_display_speed"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/history_display_distance" />
+            <TextView
+                android:id="@+id/history_display_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="85dp"
+                android:textSize="50sp"
+                android:textStyle="bold"
+                android:text="TextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/history_map" />
 
-        <TextView
-            android:id="@+id/history_display_speed"
-            android:layout_width="136dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="1dp"
-            android:textSize="30sp"
-            android:text="TextView"
-            android:textAlignment="center"
-            app:layout_constraintBottom_toBottomOf="@+id/history_display_time_taken"
-            app:layout_constraintEnd_toStartOf="@+id/history_display_steps"
-            app:layout_constraintTop_toTopOf="@+id/history_display_time_taken" />
+            <TextView
+                android:id="@+id/history_display_time_taken"
+                android:layout_width="135dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="2dp"
+                android:textSize="30sp"
+                android:text="TextView"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toStartOf="@+id/history_display_speed"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/history_display_distance" />
 
-        <TextView
-            android:id="@+id/history_display_steps"
-            android:layout_width="136dp"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textSize="30sp"
-            app:layout_constraintBottom_toBottomOf="@+id/history_display_speed"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:textAlignment="center"
-            app:layout_constraintTop_toTopOf="@+id/history_display_speed" />
+            <TextView
+                android:id="@+id/history_display_speed"
+                android:layout_width="136dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="1dp"
+                android:textSize="30sp"
+                android:text="TextView"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@+id/history_display_time_taken"
+                app:layout_constraintEnd_toStartOf="@+id/history_display_steps"
+                app:layout_constraintTop_toTopOf="@+id/history_display_time_taken" />
+
+            <TextView
+                android:id="@+id/history_display_steps"
+                android:layout_width="136dp"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textSize="30sp"
+                app:layout_constraintBottom_toBottomOf="@+id/history_display_speed"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textAlignment="center"
+                app:layout_constraintTop_toTopOf="@+id/history_display_speed" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="400dp"
+                android:layout_marginTop="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.487"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/history_display_speed"
+                tools:srcCompat="@tools:sample/avatars" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+
 </layout>

@@ -1,5 +1,6 @@
 package com.example.runlah.dashboard
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -20,6 +21,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 
 class HistoryFragment : Fragment() {
     private lateinit var binding: FragmentHistoryBinding
@@ -38,12 +41,17 @@ class HistoryFragment : Fragment() {
         val recordResult = args.record
         (activity as MainActivity).supportActionBar!!.title = recordResult.date
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         binding.apply {
             historyDisplayDistance.text = recordResult.distance
             historyDisplaySpeed.text = recordResult.speed
             historyDisplaySteps.text = recordResult.steps
             historyDisplayTimeTaken.text = recordResult.timeTaken
         }
+
+        displayImage()
+
+        // prepare the map
         val supportMapFragment = childFragmentManager.findFragmentById(R.id.history_map) as SupportMapFragment
         supportMapFragment.getMapAsync { map ->
             // get coordinates for start and end markers
@@ -69,6 +77,19 @@ class HistoryFragment : Fragment() {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(recordResult.latLngArray.first(), zoomLevel))
         }
         return binding.root
+    }
+
+    fun displayImage() {
+        val storage = FirebaseStorage.getInstance()
+        val auth = FirebaseAuth.getInstance()
+        val ONE_MEGABYTE: Long = 1024 * 1024
+        val refString = "gs://runlah.appspot.com/" + auth.currentUser!!.uid + "/" + args.record.uuid
+        val gsReference = storage.getReferenceFromUrl(refString)
+        gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener {
+            val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+            binding.imageView2.setImageBitmap(bitmap)
+            binding.imageView2.visibility = View.VISIBLE
+        }
     }
 
 
