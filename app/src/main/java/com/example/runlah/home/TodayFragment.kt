@@ -1,6 +1,11 @@
 package com.example.runlah.home
 
+import android.content.Context
 import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -22,27 +27,37 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDateTime
 
-class TodayFragment : Fragment() {
+class TodayFragment : Fragment(), SensorEventListener {
     private lateinit var binding: FragmentTodayBinding
     private lateinit var currentDateTime: LocalDateTime
     private val todayDataMap = hashMapOf("today" to TodayData())
+    private lateinit var sensorManager: SensorManager
+    private var surroundingTemperatureSensor: Sensor? = null
 
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         currentDateTime = LocalDateTime.now()
+        sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        surroundingTemperatureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE)
+
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_today, container, false)
-        (activity as MainActivity).supportActionBar!!.title = "Today's activity"
+        (activity as MainActivity).supportActionBar!!.title = "Today"
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
+        if (surroundingTemperatureSensor != null) {
+            binding.apply {
+                ambientTemperature.visibility = View.VISIBLE
+                temperatureText.visibility = View.VISIBLE
+            }
+        }
         getTodayData()
         binding.logOut.setOnClickListener {
             val auth = FirebaseAuth.getInstance()
@@ -54,7 +69,16 @@ class TodayFragment : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onResume() {
+        super.onResume()
+        sensorManager.registerListener(this, surroundingTemperatureSensor, SensorManager.SENSOR_DELAY_NORMAL)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(this)
+    }
+
     fun getTodayData() {
         val firestore = FirebaseFirestore.getInstance()
         val auth = FirebaseAuth.getInstance()
@@ -86,6 +110,17 @@ class TodayFragment : Fragment() {
         val stringSteps = "${todayRef.steps} steps"
         binding.todayDistance.text = stringDistance
         binding.todaySteps.text = stringSteps
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event!!.sensor.type == Sensor.TYPE_AMBIENT_TEMPERATURE) {
+            val temperature = event.values[0].toString()
+            binding.ambientTemperature.text = "$temperature \u2103"
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+
     }
 
 

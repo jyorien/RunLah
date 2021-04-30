@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val orientationEventListener = object : OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
             override fun onOrientationChanged(orientation: Int) {
                 if (orientation in 141..229) {
-                    Log.i("hello","upside down")
                     binding.apply {
                         blackOverlay.visibility = View.VISIBLE
                         supportActionBar!!.hide()
@@ -55,7 +54,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onResume() {
         super.onResume()
         sensorManager.registerListener(this, light, SensorManager.SENSOR_DELAY_NORMAL)
-        Log.i("hello","Registered listener")
     }
 
     override fun onPause() {
