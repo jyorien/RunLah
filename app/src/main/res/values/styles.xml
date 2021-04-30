@@ -10,4 +10,7 @@
         <item name="android:layout_marginHorizontal">48dp</item>
         <item name="android:layout_marginBottom">256dp</item>
     </style>
+    <style name="SplashScreen" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/background_splashscreen</item>
+    </style>
 </resources>
