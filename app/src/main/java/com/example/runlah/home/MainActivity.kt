@@ -5,15 +5,11 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.hardware.display.DisplayManager
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
 import android.view.MenuItem
 import android.view.OrientationEventListener
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -32,7 +28,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         navigateToFragment()
-        val orientationEventListener = object : OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
+        val orientationEventListener = object : OrientationEventListener(
+            this,
+            SensorManager.SENSOR_DELAY_NORMAL
+        ) {
             override fun onOrientationChanged(orientation: Int) {
                 if (orientation in 141..229) {
                     binding.apply {
@@ -43,7 +42,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     binding.apply {
                         blackOverlay.visibility = View.GONE
                         supportActionBar!!.show()
-//                        Log.i("hello","show bar")
                     }
                 }
             }
@@ -76,10 +74,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent?) {
         if (event!!.sensor.type == Sensor.TYPE_LIGHT) {
             val lightValue = event.values[0]
-            if (lightValue < 30)
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            else
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            if (lightValue < 30) {
+                val layout = window.attributes
+                layout.screenBrightness = 0f
+                window.attributes = layout
+            }
+//                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            else {
+                val layout = window.attributes
+                layout.screenBrightness = 0.3f
+                window.attributes = layout
+            }
+//                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
 
