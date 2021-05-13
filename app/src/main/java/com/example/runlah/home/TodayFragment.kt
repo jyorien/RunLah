@@ -59,13 +59,6 @@ class TodayFragment : Fragment(), SensorEventListener {
             }
         }
         getTodayData()
-        binding.logOut.setOnClickListener {
-            val auth = FirebaseAuth.getInstance()
-            auth.signOut()
-            Intent(requireActivity(), LoginActivity::class.java).also { intent ->
-                startActivity(intent)
-            }
-        }
         return binding.root
     }
 
