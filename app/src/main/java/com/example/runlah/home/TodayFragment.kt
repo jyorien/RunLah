@@ -95,7 +95,12 @@ class TodayFragment : Fragment(), SensorEventListener {
                     val recordDateTime = DateUtil.getDateInLocalDateTime(time)
                     if (recordDateTime.dayOfMonth == currentDateTime.dayOfMonth) {
                         val distance = (document["distanceTravelled"] as Double).toFloat()
-                        val steps = (document["stepCount"] as Double).toInt()
+                        val stepCount = document["stepCount"]
+                        var steps = 0
+                        if (stepCount is Long)
+                            steps = (stepCount as Long).toDouble().toInt()
+                        else
+                            steps = (stepCount as Double).toInt()
                         todayRef.distance+= distance
                         todayRef.steps+= steps
                     }

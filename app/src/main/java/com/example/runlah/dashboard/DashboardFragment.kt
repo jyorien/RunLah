@@ -60,7 +60,8 @@ class DashboardFragment : Fragment() {
         // hide up button
         (activity as MainActivity).supportActionBar!!.title = "Dashboard"
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.VISIBLE
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility =
+            View.VISIBLE
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_dashboard, container, false)
         currentDate = LocalDateTime.now()
@@ -85,7 +86,8 @@ class DashboardFragment : Fragment() {
                     val time = docData["timestamp"] as Timestamp
                     val date = DateUtil.getDateInLocalDateTime(time)
                     val minute = formatMinutes(date.minute.toString())
-                    val displayDate = "${date.dayOfMonth} ${date.month} ${date.year} ${date.hour}:${minute}"
+                    val displayDate =
+                        "${date.dayOfMonth} ${date.month} ${date.year} ${date.hour}:${minute}"
 
                     var distance = "${docData["distanceTravelled"]}"
 
@@ -94,7 +96,7 @@ class DashboardFragment : Fragment() {
                     }
                     if (distance == "null") distance = "0.00"
                     else distance = (distance.toFloat() / 1000).toString()
-                    distance ="${String.format("%.2f", distance.toFloat())} km"
+                    distance = "${String.format("%.2f", distance.toFloat())} km"
 
 
                     var timeTaken = "${docData["timeTaken"]}"
@@ -103,19 +105,36 @@ class DashboardFragment : Fragment() {
                     var speed = "${docData["averageSpeed"]}"
                     if (speed == "null") speed = "0 m/s"
                     else speed = "${String.format("%.2f", speed.toFloat())} m/s"
-
-                    val coordinatesArray = docData["coordinatesArray"]
+                    val givenCoordinatesArray = docData["coordinatesArray"]
+                    var coordinatesArray = arrayListOf<HashMap<String, Double>>()
+//                    val coordinatesArray = docData["coordinatesArray"]
+                    if (givenCoordinatesArray is HashMap<*, *>) {
+                        givenCoordinatesArray.forEach {
+                            coordinatesArray.add(it.value as HashMap<String, Double>)
+                        }
+                    } else
+                        coordinatesArray = givenCoordinatesArray as ArrayList<HashMap<String, Double>>
                     // cast to arraylist so can iterate through
                     val latLngArray = arrayListOf<LatLng>()
-                    (coordinatesArray as ArrayList<HashMap<String, Double>>).forEach { coordinates ->
-                        latLngArray.add(LatLng(coordinates["latitude"]!!, coordinates["longitude"]!!))
+                    (coordinatesArray).forEach { coordinates ->
+                        latLngArray.add(
+                            LatLng(
+                                coordinates["latitude"]!!,
+                                coordinates["longitude"]!!
+                            )
+                        )
                     }
-
-                    var steps = "${(docData["stepCount"] as Double).toInt()} steps"
+                    var givenSteps = docData["stepCount"]
+                    var steps = ""
+                    // if data from flutter app, type is long
+                    if (givenSteps is Long)
+                        steps = "${givenSteps.toDouble().toInt()} steps"
+                    // if data from android app, type is double
+                    else
+                        steps = "${(givenSteps as Double).toInt()} steps"
                     if (steps == "null steps") steps = "0 steps"
 
                     val uuid = docData["uuid"].toString()
-                    Log.i("hello","uuid $uuid")
                     val record = Record(
                         displayDate,
                         distance,
@@ -137,7 +156,8 @@ class DashboardFragment : Fragment() {
                 getChartAppearance()
                 prepareChartData(data)
                 binding.historyList.adapter = HistoryListAdapter(recordList) { record ->
-                    val action = DashboardFragmentDirections.actionDashboardFragmentToHistoryFragment(record)
+                    val action =
+                        DashboardFragmentDirections.actionDashboardFragmentToHistoryFragment(record)
                     findNavController().navigate(action)
                 }
 
@@ -160,21 +180,21 @@ class DashboardFragment : Fragment() {
     private fun populateWeeklyTotalDistanceMap() {
         weeklyDistanceList.sortBy { it.date }
 
-        val groupedWeeklyDistanceList = weeklyDistanceList.groupBy {  it.date.dayOfMonth }
+        val groupedWeeklyDistanceList = weeklyDistanceList.groupBy { it.date.dayOfMonth }
         groupedWeeklyDistanceList.forEach { (key, value) ->
             var totalDistance = 0.0F
             value.forEach { distance ->
-                totalDistance+=distance.distance
+                totalDistance += distance.distance
             }
             weeklyTotalDistanceMap[key] = totalDistance
         }
-        Log.i("hello","map $weeklyTotalDistanceMap")
+        Log.i("hello", "map $weeklyTotalDistanceMap")
 
     }
 
     val label = "Distance (m)"
     private fun getChartAppearance() {
-        binding.barChart.xAxis.valueFormatter = object: ValueFormatter() {
+        binding.barChart.xAxis.valueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String = value.toInt().toString()
 
         }
@@ -182,7 +202,8 @@ class DashboardFragment : Fragment() {
         binding.barChart.description.isEnabled = false
         binding.barChart.axisLeft.granularity = 10f
         binding.barChart.axisLeft.axisMinimum = 0f
-        binding.barChart.xAxis.textColor = ContextCompat.getColor(requireContext(), R.color.invertedTextColor)
+        binding.barChart.xAxis.textColor =
+            ContextCompat.getColor(requireContext(), R.color.invertedTextColor)
     }
 
     private fun getChartData(): BarData {
@@ -190,7 +211,7 @@ class DashboardFragment : Fragment() {
         MIN_X_VALUE = xAxisValues.first().toInt()
         MAX_X_VALUE = xAxisValues.last().toInt()
         for (i in MIN_X_VALUE..MAX_X_VALUE) {
-            var coordinates = BarEntry(i.toFloat(),0f)
+            var coordinates = BarEntry(i.toFloat(), 0f)
             if (weeklyTotalDistanceMap.keys.contains(i)) {
                 val y = weeklyTotalDistanceMap[i]
 
@@ -203,6 +224,7 @@ class DashboardFragment : Fragment() {
         datasets.add(set1)
         return BarData(datasets)
     }
+
     private fun prepareChartData(data: BarData) {
         data.setValueTextSize(12f)
         binding.barChart.data = data
