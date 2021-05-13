@@ -204,6 +204,8 @@ class DashboardFragment : Fragment() {
         binding.barChart.axisLeft.axisMinimum = 0f
         binding.barChart.xAxis.textColor =
             ContextCompat.getColor(requireContext(), R.color.invertedTextColor)
+        binding.barChart.axisLeft.textColor = ContextCompat.getColor(requireContext(), R.color.invertedTextColor)
+        binding.barChart.legend.textColor = ContextCompat.getColor(requireContext(), R.color.invertedTextColor)
     }
 
     private fun getChartData(): BarData {
@@ -227,6 +229,7 @@ class DashboardFragment : Fragment() {
 
     private fun prepareChartData(data: BarData) {
         data.setValueTextSize(12f)
+        data.setValueTextColor(ContextCompat.getColor(requireContext(), R.color.invertedTextColor))
         binding.barChart.data = data
         binding.barChart.animateY(500)
         binding.barChart.invalidate()
