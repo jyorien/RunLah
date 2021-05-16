@@ -9,4 +9,5 @@
   <color name="primaryTextColor">#ffffff</color>
   <color name="secondaryTextColor">#ffffff</color>
   <color name="invertedTextColor">#F6F6F6</color>
+  <color name="primaryTransparentColor">#97212121</color>
 </resources>
