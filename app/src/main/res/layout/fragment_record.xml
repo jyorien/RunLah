@@ -39,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:textSize="64sp"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayout"
                 app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
@@ -50,6 +51,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="4dp"
                 android:text="0"
+                android:textColor="@color/white"
                 android:textAlignment="center"
                 android:textSize="40sp"
                 app:layout_constraintBottom_toTopOf="@id/textView4"
@@ -63,6 +65,7 @@
                 android:layout_marginBottom="72dp"
                 android:text="@string/steps"
                 android:textAlignment="center"
+                android:textColor="@color/white"
                 android:textSize="30sp"
                 app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayout" />
@@ -71,7 +74,7 @@
                 android:id="@+id/distance_travelled"
                 android:layout_width="109dp"
                 android:layout_height="wrap_content"
-
+                android:textColor="@color/white"
                 android:text="0.0"
                 android:textAlignment="center"
                 android:textSize="40sp"
@@ -83,6 +86,7 @@
                 android:layout_width="109dp"
                 android:layout_height="wrap_content"
                 android:text="km"
+                android:textColor="@color/white"
                 android:textAlignment="center"
                 android:textSize="30sp"
                 app:layout_constraintStart_toEndOf="@+id/textView4"
@@ -93,6 +97,7 @@
                 android:layout_width="109dp"
                 android:layout_height="wrap_content"
                 android:text="m/s"
+                android:textColor="@color/white"
                 android:textAlignment="center"
                 android:textSize="30sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -103,7 +108,7 @@
                 android:id="@+id/current_speed"
                 android:layout_width="109dp"
                 android:layout_height="wrap_content"
-
+                android:textColor="@color/white"
                 android:text="0.0"
                 android:textAlignment="center"
                 android:textSize="40sp"

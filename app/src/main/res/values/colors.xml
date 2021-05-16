@@ -11,4 +11,6 @@
   <color name="polyLineBlue">#669EF6</color>
   <color name="invertedTextColor">#000000</color>
   <color name="primaryTransparentColor">#974527a0</color>
+  <color name="secondaryThemeColor">#06959A</color>
+  <color name="white">#F6F6F6</color>
 </resources>

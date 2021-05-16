@@ -3,6 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:paddingBottom="30dp"
+    android:layout_marginBottom="30dp"
+    android:layout_marginHorizontal="20dp"
+    android:background="@drawable/today_summary_background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -13,6 +16,8 @@
         android:text="26/4/20/21 5 pm"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginTop="10dp"
         android:paddingHorizontal="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,11 +27,12 @@
         android:id="@+id/history_distance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:textSize="40sp"
         android:textStyle="bold"
         android:paddingHorizontal="30dp"
         android:text="2.4km"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/history_date" />
@@ -35,8 +41,9 @@
         android:id="@+id/history_time"
         android:layout_width="135dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="8dp"
         android:text="10 min"
+        android:textColor="@color/white"
         android:textAlignment="center"
         app:layout_constraintEnd_toStartOf="@+id/history_speed"
         app:layout_constraintHorizontal_bias="0.5"
@@ -44,26 +51,29 @@
         app:layout_constraintTop_toBottomOf="@+id/history_distance" />
 
     <TextView
+        android:id="@+id/history_steps"
+        android:layout_width="136dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="300 steps"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/history_speed"
+        app:layout_constraintTop_toBottomOf="@+id/history_distance" />
+
+    <TextView
         android:id="@+id/history_speed"
         android:layout_width="136dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="8dp"
         android:text="2 m/s"
+        android:textColor="@color/white"
         android:textAlignment="center"
         app:layout_constraintEnd_toStartOf="@+id/history_steps"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/history_time"
         app:layout_constraintTop_toBottomOf="@+id/history_distance" />
 
-    <TextView
-        android:id="@+id/history_steps"
-        android:layout_width="136dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="300 steps"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/history_speed"
-        app:layout_constraintTop_toBottomOf="@+id/history_distance" />
 </androidx.constraintlayout.widget.ConstraintLayout>
