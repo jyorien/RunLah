@@ -104,10 +104,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.settings_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
+
 
 
 }
