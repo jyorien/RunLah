@@ -222,6 +222,7 @@ class DashboardFragment : Fragment() {
             values.add(coordinates)
         }
         val set1 = BarDataSet(values, label)
+        set1.color = ContextCompat.getColor(requireContext(), R.color.secondaryColor)
         val datasets = arrayListOf<IBarDataSet>()
         datasets.add(set1)
         return BarData(datasets)
