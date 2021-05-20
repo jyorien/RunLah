@@ -52,7 +52,8 @@ class TodayFragment : Fragment(), SensorEventListener {
         }
         binding.lifecycleOwner = this
         viewModel.todayMap.observe(viewLifecycleOwner, {
-            displayData(steps = it[stepKey] as Int, distance = it[distanceKey] as Double)
+            if (it[stepKey] != null && it[distanceKey] != null)
+                displayData(steps = it[stepKey] as Int, distance = it[distanceKey] as Double)
 
         })
 
