@@ -2,11 +2,9 @@ package com.example.runlah.home
 
 import android.app.Application
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.runlah.dashboard.Distance
 import com.example.runlah.dashboard.Record
 import com.example.runlah.util.DateUtil
 import com.google.android.gms.maps.model.LatLng
@@ -16,7 +14,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.Query
 import java.time.LocalDateTime
-
+import kotlin.math.truncate
+const val stepKey = "steps"
+const val distanceKey = "distance"
 class SharedViewModel(application: Application) : AndroidViewModel(application) {
     private var mAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private var mFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -27,25 +27,29 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     private val _weeklyDistanceMap = MutableLiveData<Map<Int, Double>>()
     val weeklyDistanceMap: LiveData<Map<Int, Double>>
-    get() = _weeklyDistanceMap
+        get() = _weeklyDistanceMap
 
     private val _xAxisValues = MutableLiveData<ArrayList<Int>>()
     val xAxisValues: LiveData<ArrayList<Int>>
-    get() = _xAxisValues
+        get() = _xAxisValues
 
     private val currentDate = LocalDateTime.now()
+
+    private val _todayMap = MutableLiveData<HashMap<String, Any>>()
+    val todayMap: LiveData<HashMap<String, Any>>
+        get() = _todayMap
 
     init {
         getHistoryData()
     }
-    private fun getHistoryData() {
 
+    private fun getHistoryData() {
+        // populate dashboard list data
         val docRef =
             mFirestore.collection("users").document(mAuth.currentUser!!.uid).collection("records")
         docRef
             .orderBy("timestamp", Query.Direction.DESCENDING)
-            .addSnapshotListener(MetadataChanges.INCLUDE)  { documentSnapshot, e ->
-
+            .addSnapshotListener(MetadataChanges.INCLUDE) { documentSnapshot, e ->
                 // if error, return
                 if (e != null || documentSnapshot == null || documentSnapshot.isEmpty) {
                     return@addSnapshotListener
@@ -58,7 +62,6 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
                 documentSnapshot.forEach { document ->
                     val docData = document.data
-                    Log.i("hello","timestamp ${docData["timestamp"]}")
                     val time = docData["timestamp"] as Timestamp
                     val date = DateUtil.getDateInLocalDateTime(time)
                     val minute = formatMinutes(date.minute.toString())
@@ -86,7 +89,8 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
                             coordinatesArray.add(it.value as HashMap<String, Double>)
                         }
                     } else
-                        coordinatesArray = givenCoordinatesArray as ArrayList<HashMap<String, Double>>
+                        coordinatesArray =
+                            givenCoordinatesArray as ArrayList<HashMap<String, Double>>
                     // cast to arraylist so can iterate through
                     val latLngArray = arrayListOf<LatLng>()
                     (coordinatesArray).forEach { coordinates ->
@@ -97,15 +101,17 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
                             )
                         )
                     }
-                    val givenSteps = docData["stepCount"]
-                    var steps = ""
-                    // if data from flutter app, type is long
-                    if (givenSteps is Long)
-                        steps = "${givenSteps.toDouble().toInt()} steps"
-                    // if data from android app, type is double
-                    else
-                        steps = "${(givenSteps as Double).toInt()} steps"
-                    if (steps == "null steps") steps = "0 steps"
+
+                    var givenSteps = docData["stepCount"].toString()
+
+                    lateinit var steps: String
+
+                    if (givenSteps == "null") {
+                        givenSteps = "0"
+                        steps = "0 steps"
+                    } else {
+                        steps = "${givenSteps.substringBefore(".")} steps"
+                    }
 
                     val uuid = docData["uuid"].toString()
                     val record = Record(
@@ -117,12 +123,14 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
                         latLngArray,
                         uuid,
                         date,
-                        rawDistance
+                        rawDistance,
+                        givenSteps.substringBefore(".").toInt()
                     )
                     recordList.add(record)
 
                 }
                 _recordList.value = recordList
+                getTodayData(recordList)
                 getWeeklyDistance(recordList)
 
             }
@@ -130,6 +138,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun getWeeklyDistance(givenList: ArrayList<Record>) {
+        // populate bar chart data
         val list = givenList.sortedBy { it.rawDate }
         val distanceMap = hashMapOf<Int, Double>()
         val xAxisList = arrayListOf<Int>()
@@ -139,15 +148,12 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
                 val key = record.rawDate.dayOfMonth
 
                 if (distanceMap[key] != null) {
-                    Log.i("hello","help plus ${record.rawDate} ${record.rawDistance}")
                     distanceMap[key] = distanceMap[key]!!.plus(record.rawDistance)
                 } else {
-                    Log.i("hello","help assign ${record.rawDate} ${record.rawDistance}")
                     distanceMap[key] = record.rawDistance
                 }
             }
         }
-        Log.i("hello","hello $distanceMap")
         _weeklyDistanceMap.value = distanceMap.toSortedMap(reverseOrder())
 
         // populate x axis list
@@ -155,14 +161,32 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
             xAxisList.add(i)
         }
         _xAxisValues.value = xAxisList
-
     }
-
 
     private fun formatMinutes(minutes: String): String {
         var minute = minutes
         if (minutes.toInt() < 10)
             minute = "0$minutes"
         return minute
+    }
+
+    private fun getTodayData(givenList: ArrayList<Record>) {
+        val todayMap = hashMapOf<String, Any>()
+        givenList.forEach { record ->
+            if (record.rawDate.dayOfMonth == currentDate.dayOfMonth && record.rawDate.year == currentDate.year && record.rawDate.monthValue == currentDate.monthValue) {
+                if (todayMap[stepKey] == null)
+                    todayMap[stepKey] = record.rawSteps
+                else
+                    todayMap[stepKey] = (todayMap[stepKey] as Int) + record.rawSteps
+
+                if (todayMap[distanceKey] == null)
+                    todayMap[distanceKey] = record.rawDistance
+                else
+                    todayMap[distanceKey] =
+                        (todayMap[distanceKey] as Double).plus(record.rawDistance)
+            }
+        }
+        _todayMap.value = todayMap
+
     }
 }

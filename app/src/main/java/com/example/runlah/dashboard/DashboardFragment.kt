@@ -40,7 +40,6 @@ import kotlin.math.roundToInt
 class DashboardFragment : Fragment() {
     private lateinit var binding: FragmentDashboardBinding
     private lateinit var weeklyTotalDistanceMap: TreeMap<Int, Double>
-    private lateinit var currentDate: LocalDateTime
     private val viewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -76,14 +75,12 @@ class DashboardFragment : Fragment() {
             prepareChartData(data)
 
         })
-        currentDate = LocalDateTime.now()
         return binding.root
     }
 
     private fun getChartAppearance() {
         binding.barChart.xAxis.valueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String = value.toInt().toString()
-
         }
         binding.barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         binding.barChart.description.isEnabled = false

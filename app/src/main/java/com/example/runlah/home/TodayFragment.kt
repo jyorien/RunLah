@@ -1,7 +1,6 @@
 package com.example.runlah.home
 
 import android.content.Context
-import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -12,25 +11,16 @@ import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.example.runlah.R
-import com.example.runlah.dashboard.Record
-import com.example.runlah.dashboard.TodayData
 import com.example.runlah.databinding.FragmentTodayBinding
-import com.example.runlah.login.LoginActivity
-import com.example.runlah.util.DateUtil
-import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDateTime
 
 class TodayFragment : Fragment(), SensorEventListener {
     private lateinit var binding: FragmentTodayBinding
     private lateinit var currentDateTime: LocalDateTime
     private val viewModel: SharedViewModel by activityViewModels()
-    private val todayDataMap = hashMapOf("today" to TodayData())
     private lateinit var sensorManager: SensorManager
     private var surroundingTemperatureSensor: Sensor? = null
 
@@ -60,7 +50,12 @@ class TodayFragment : Fragment(), SensorEventListener {
                 temperatureText.visibility = View.VISIBLE
             }
         }
-        getTodayData()
+        binding.lifecycleOwner = this
+        viewModel.todayMap.observe(viewLifecycleOwner, {
+            displayData(steps = it[stepKey] as Int, distance = it[distanceKey] as Double)
+
+        })
+
         return binding.root
     }
 
@@ -74,40 +69,9 @@ class TodayFragment : Fragment(), SensorEventListener {
         sensorManager.unregisterListener(this)
     }
 
-    fun getTodayData() {
-        val firestore = FirebaseFirestore.getInstance()
-        val auth = FirebaseAuth.getInstance()
-        firestore
-            .collection("users")
-            .document(auth.currentUser!!.uid)
-            .collection("records")
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                // group by day, get today's date only
-                val todayRef = todayDataMap["today"]!!
-                documentSnapshot.forEach {  document ->
-                    val time = document["timestamp"] as Timestamp
-                    val recordDateTime = DateUtil.getDateInLocalDateTime(time)
-                    if (recordDateTime.dayOfMonth == currentDateTime.dayOfMonth) {
-                        val distance = (document["distanceTravelled"] as Double).toFloat()
-                        val stepCount = document["stepCount"]
-                        var steps = 0
-                        if (stepCount is Long)
-                            steps = (stepCount as Long).toDouble().toInt()
-                        else
-                            steps = (stepCount as Double).toInt()
-                        todayRef.distance+= distance
-                        todayRef.steps+= steps
-                    }
-                }
-                displayData()
-            }
-    }
-
-    private fun displayData() {
-        val todayRef = todayDataMap["today"]!!
-        val stringDistance = "${String.format("%.2f", todayRef.distance/1000)} km"
-        val stringSteps = "${todayRef.steps} steps"
+    private fun displayData(distance: Double, steps: Int) {
+        val stringDistance = "${String.format("%.2f", distance/1000)} km"
+        val stringSteps = "$steps steps"
         binding.todayDistance.text = stringDistance
         binding.todaySteps.text = stringSteps
     }
@@ -127,7 +91,5 @@ class TodayFragment : Fragment(), SensorEventListener {
         inflater.inflate(R.menu.settings_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
-
-
 
 }

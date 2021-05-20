@@ -13,5 +13,6 @@ data class Record(
     val latLngArray: ArrayList<LatLng> = arrayListOf(),
     val uuid: String = "null",
     val rawDate: LocalDateTime,
-    val rawDistance: Double
+    val rawDistance: Double,
+    val rawSteps: Int
 ): Serializable

@@ -13,6 +13,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.databinding.DataBindingUtil
@@ -40,11 +42,27 @@ import java.util.*
 
 class ResultsFragment : Fragment() {
     private lateinit var binding: FragmentResultsBinding
-    private val REQUEST_IMAGE_CAPTURE = 1
     private val args: ResultsFragmentArgs by navArgs()
+    private lateinit var request: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        request = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val imageBitmap = result.data!!.extras!!.get("data") as Bitmap
+                getImage(imageBitmap)
+                (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
+            }
+        }
         super.onCreate(savedInstanceState)
 
+    }
+    fun getImage(imageBitmap: Bitmap) {
+        binding.apply {
+            btnCamera.visibility = View.GONE
+            imageView.visibility = View.VISIBLE
+            imageView.setImageBitmap(imageBitmap)
+
+        }
     }
 
     override fun onCreateView(
@@ -54,7 +72,6 @@ class ResultsFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_results, container, false)
         (activity as MainActivity).supportActionBar!!.title = "Results"
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
         val latLngArray = arrayListOf<LatLng>()
         // get coordinates to mark on map
         for (i in 0..args.latlngList.size - 2 step 2) {
@@ -160,22 +177,13 @@ class ResultsFragment : Fragment() {
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         try {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+            request.launch(takePictureIntent)
         } catch (e: ActivityNotFoundException) {
             // display error state to the user
+            Log.i("hello",e.toString())
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            val imageBitmap = data!!.extras!!.get("data") as Bitmap
-            binding.apply {
-                btnCamera.visibility = View.GONE
-                imageView.visibility = View.VISIBLE
-                imageView.setImageBitmap(imageBitmap)
 
-            }
-        }
-    }
 
 }

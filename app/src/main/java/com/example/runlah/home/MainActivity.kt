@@ -65,6 +65,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private fun navigateToFragment() {
         val navController = findNavController(R.id.host_fragment)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.bottom_nav -> binding.bottomNav.visibility = View.GONE
+            }
+        }
         val bottomNav = binding.bottomNav
         NavigationUI.setupWithNavController(bottomNav, navController)
     }
