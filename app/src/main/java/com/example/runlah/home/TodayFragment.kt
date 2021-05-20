@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import com.example.runlah.R
 import com.example.runlah.dashboard.Record
 import com.example.runlah.dashboard.TodayData
@@ -28,6 +29,7 @@ import java.time.LocalDateTime
 class TodayFragment : Fragment(), SensorEventListener {
     private lateinit var binding: FragmentTodayBinding
     private lateinit var currentDateTime: LocalDateTime
+    private val viewModel: SharedViewModel by activityViewModels()
     private val todayDataMap = hashMapOf("today" to TodayData())
     private lateinit var sensorManager: SensorManager
     private var surroundingTemperatureSensor: Sensor? = null
@@ -49,6 +51,7 @@ class TodayFragment : Fragment(), SensorEventListener {
     ): View? {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_today, container, false)
+
         (activity as MainActivity).supportActionBar!!.title = "Today"
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
         if (surroundingTemperatureSensor != null) {

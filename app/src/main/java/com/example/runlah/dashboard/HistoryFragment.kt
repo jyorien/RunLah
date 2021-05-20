@@ -39,7 +39,7 @@ class HistoryFragment : Fragment() {
         requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
         binding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_history, container, false)
         val recordResult = args.record
-        (activity as MainActivity).supportActionBar!!.title = recordResult.date
+        (activity as MainActivity).supportActionBar!!.title = recordResult.formattedDate
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         binding.apply {

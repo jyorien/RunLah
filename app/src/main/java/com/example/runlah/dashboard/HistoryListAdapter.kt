@@ -26,7 +26,7 @@ class HistoryListAdapter(val recordList: ArrayList<Record>, val onItemClick: (Re
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // bind viewholder to data
         val item = recordList[position]
-        holder.history_date.text = item.date
+        holder.history_date.text = item.formattedDate
         holder.history_distance.text = item.distance
         holder.history_time.text = item.timeTaken
         holder.history_speed.text = item.speed
