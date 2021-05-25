@@ -7,27 +7,54 @@
 
     </data>
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".home.TodayFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="150dp"
-            android:layout_marginRight="30dp"
-            android:layout_height="200dp"
-            android:layout_marginTop="100dp"
+            android:id="@+id/constraintLayout3"
+            android:layout_width="350dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="116dp"
             android:background="@drawable/today_summary_background"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.491"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tip_of_day"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Drink more water"
+                android:textSize="20sp"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
+            android:layout_width="150dp"
+            android:layout_height="200dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/today_summary_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
 
 
             <TextView
                 android:id="@+id/textView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Step Count"
                 android:layout_marginTop="10dp"
+                android:text="Step Count"
                 android:textSize="25sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -50,19 +77,19 @@
             android:layout_width="150dp"
             android:layout_height="200dp"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="30dp"
             android:background="@drawable/today_summary_background"
 
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
 
 
             <TextView
                 android:id="@+id/textView7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Distance"
                 android:layout_marginTop="10dp"
+                android:text="Distance"
                 android:textSize="25sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -89,7 +116,7 @@
             android:text="50&#x2103;"
             android:layout_marginLeft="10dp"
             android:textSize="40sp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/temperatureText"
             app:layout_constraintStart_toEndOf="@+id/temperatureText"
             app:layout_constraintTop_toTopOf="@+id/temperatureText" />
@@ -102,9 +129,11 @@
             android:layout_marginTop="24dp"
             android:text="Temperature"
             android:textSize="30sp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 </layout>
