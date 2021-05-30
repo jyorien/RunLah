@@ -3,11 +3,12 @@ package com.example.runlah.dashboard
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.runlah.R
 
-class HistoryListAdapter(val recordList: ArrayList<Record>, val onItemClick: (Record) -> Unit): RecyclerView.Adapter<HistoryListAdapter.ViewHolder>() {
+class HistoryListAdapter(val recordList: ArrayList<Record>, val onItemClick: (Record) -> Unit, val onDeleteClick: (Record) -> Unit): RecyclerView.Adapter<HistoryListAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val history_date: TextView = itemView.findViewById(R.id.history_date)
@@ -15,6 +16,7 @@ class HistoryListAdapter(val recordList: ArrayList<Record>, val onItemClick: (Re
         val history_time: TextView = itemView.findViewById(R.id.history_time)
         val history_speed: TextView = itemView.findViewById(R.id.history_speed)
         val history_steps: TextView = itemView.findViewById(R.id.history_steps)
+        val history_delete: ImageButton = itemView.findViewById(R.id.btn_delete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -33,6 +35,9 @@ class HistoryListAdapter(val recordList: ArrayList<Record>, val onItemClick: (Re
         holder.history_steps.text = item.steps
         holder.itemView.setOnClickListener {
             onItemClick(item)
+        }
+        holder.history_delete.setOnClickListener {
+            onDeleteClick(item)
         }
     }
 

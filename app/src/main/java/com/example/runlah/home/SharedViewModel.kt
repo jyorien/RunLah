@@ -47,6 +47,10 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     val isDeleted: LiveData<Boolean>
     get() = _isDeleted
 
+    private val _isSingleDeleted = MutableLiveData(false)
+    val isSingleDeleted: LiveData<Boolean>
+        get() = _isSingleDeleted
+
     init {
         getHistoryData()
     }
@@ -76,8 +80,8 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
                 val recordList = arrayListOf<Record>()
 
                 documentSnapshot.forEach { document ->
-                    Log.i("hello", document.id)
                     val docData = document.data
+                    val docId = document.id
                     val time = docData["timestamp"] as Timestamp
                     val date = DateUtil.getDateInLocalDateTime(time)
                     val minute = formatMinutes(date.minute.toString())
@@ -131,6 +135,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
                     val uuid = docData["uuid"].toString()
                     val record = Record(
+                        docId,
                         displayDate,
                         distance,
                         timeTaken,
@@ -167,6 +172,18 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     fun onCompleteDelete() {
         _isDeleted.value = false
+    }
+
+    fun deleteSingleUserRecord(docId: String) {
+        val docRef =
+            mFirestore.collection("users").document(mAuth.currentUser!!.uid).collection("records").document(docId)
+        docRef.delete().addOnSuccessListener {
+            _isSingleDeleted.value = true
+        }
+    }
+
+    fun onCompleteSingleDelete() {
+        _isSingleDeleted.value = false
     }
 
     private fun getWeeklyDistance(givenList: ArrayList<Record>) {

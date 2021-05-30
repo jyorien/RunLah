@@ -23,6 +23,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
+        android:id="@+id/btn_delete"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/history_distance"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="?android:selectableItemBackground"
+        android:src="@drawable/ic_baseline_delete_24" />
+
     <TextView
         android:id="@+id/history_distance"
         android:layout_width="match_parent"
@@ -75,5 +86,6 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/history_time"
         app:layout_constraintTop_toBottomOf="@+id/history_distance" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

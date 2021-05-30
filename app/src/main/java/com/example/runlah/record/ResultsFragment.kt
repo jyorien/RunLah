@@ -56,7 +56,7 @@ class ResultsFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
     }
-    fun getImage(imageBitmap: Bitmap) {
+    private fun getImage(imageBitmap: Bitmap) {
         binding.apply {
             btnCamera.visibility = View.GONE
             imageView.visibility = View.VISIBLE

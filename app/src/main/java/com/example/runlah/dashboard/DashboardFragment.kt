@@ -1,11 +1,8 @@
 package com.example.runlah.dashboard
 
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -16,25 +13,16 @@ import com.example.runlah.R
 import com.example.runlah.databinding.FragmentDashboardBinding
 import com.example.runlah.home.MainActivity
 import com.example.runlah.home.SharedViewModel
-import com.example.runlah.util.DateUtil
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.math.roundToInt
 
 class DashboardFragment : Fragment() {
@@ -58,11 +46,16 @@ class DashboardFragment : Fragment() {
         binding.lifecycleOwner = this
 
         viewModel.recordList.observe(viewLifecycleOwner, { list ->
-            binding.historyList.adapter = HistoryListAdapter(list) { record ->
-                val action =
-                    DashboardFragmentDirections.actionDashboardFragmentToHistoryFragment(record)
-                findNavController().navigate(action)
-            }
+            binding.historyList.adapter = HistoryListAdapter(list,
+                { record ->
+                    val action =
+                        DashboardFragmentDirections.actionDashboardFragmentToHistoryFragment(record)
+                    findNavController().navigate(action)
+                },
+                { record ->
+                    showDeleteDialog(record.documentId)
+
+                })
             (binding.historyList.adapter as HistoryListAdapter).notifyDataSetChanged()
 
         })
@@ -79,9 +72,24 @@ class DashboardFragment : Fragment() {
 
         })
 
+        viewModel.isSingleDeleted.observe(viewLifecycleOwner, { isSingleDelete ->
+            if (isSingleDelete) {
+                Snackbar.make(
+                    binding.root,
+                    "The entry has been permanently deleted",
+                    Snackbar.LENGTH_LONG
+                ).show()
+                viewModel.onCompleteSingleDelete()
+            }
+
+        })
         viewModel.isDeleted.observe(viewLifecycleOwner, { isDeleted ->
             if (isDeleted) {
-                Snackbar.make(binding.root, "Your running entries have been permanently deleted", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    binding.root,
+                    "Your running entries have been permanently deleted",
+                    Snackbar.LENGTH_LONG
+                ).show()
                 viewModel.onCompleteDelete()
             }
 
@@ -99,8 +107,10 @@ class DashboardFragment : Fragment() {
         binding.barChart.axisLeft.axisMinimum = 0f
         binding.barChart.xAxis.textColor =
             ContextCompat.getColor(requireContext(), R.color.invertedTextColor)
-        binding.barChart.axisLeft.textColor = ContextCompat.getColor(requireContext(), R.color.invertedTextColor)
-        binding.barChart.legend.textColor = ContextCompat.getColor(requireContext(), R.color.invertedTextColor)
+        binding.barChart.axisLeft.textColor =
+            ContextCompat.getColor(requireContext(), R.color.invertedTextColor)
+        binding.barChart.legend.textColor =
+            ContextCompat.getColor(requireContext(), R.color.invertedTextColor)
     }
 
     private fun getChartData(map: Map<Int, Double>, xAxisList: ArrayList<Int>): BarData {
@@ -138,26 +148,47 @@ class DashboardFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.delete -> showDeleteDialog()
+            R.id.delete -> showDeleteAllDialog()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun showDeleteDialog() {
+    private fun showDeleteAllDialog() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Delete entries")
         builder.setMessage("Are you sure you want to delete all entries?")
-        builder.setPositiveButton("Yes") { _, _ ->
-            Toast.makeText(requireContext(), "Yes", Toast.LENGTH_SHORT).show()
+        builder.setPositiveButton("Delete") { _, _ ->
             viewModel.deleteUserRecords()
         }
         builder.setNegativeButton("Cancel") { _, _ ->
-            Toast.makeText(requireContext(), "Cancel", Toast.LENGTH_SHORT).show()
+
         }
         val alertDialog = builder.create()
         alertDialog.setOnShowListener { _ ->
-            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(requireContext(), R.color.lightRed))
-            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(requireContext(),R.color.grey))
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.lightRed))
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.grey))
+        }
+        alertDialog.show()
+    }
+
+    private fun showDeleteDialog(docId: String) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Delete entry")
+        builder.setMessage("Are you sure you want to delete this entry?")
+        builder.setPositiveButton("Delete") { _, _ ->
+            viewModel.deleteSingleUserRecord(docId)
+        }
+        builder.setNegativeButton("Cancel") { _, _ ->
+
+        }
+        val alertDialog = builder.create()
+        alertDialog.setOnShowListener { _ ->
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.lightRed))
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.grey))
         }
         alertDialog.show()
     }
