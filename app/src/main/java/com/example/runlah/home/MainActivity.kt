@@ -7,6 +7,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.OrientationEventListener
@@ -83,7 +84,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             }
             else -> {
                 binding.bottomNav.visibility = View.VISIBLE
-                findNavController(R.id.host_fragment).navigateUp()
+
+                val navController = findNavController(R.id.host_fragment)
+                val destinationId = navController.currentDestination?.id
+                // different action ids for different fragments with back button
+                if (destinationId == R.id.history_fragment) findNavController(R.id.host_fragment).navigate(R.id.action_history_fragment_to_dashboard_fragment)
+                else findNavController(R.id.host_fragment).navigate(R.id.action_record_fragment_to_today_fragment)
             }
         }
         return super.onOptionsItemSelected(item)
