@@ -41,10 +41,6 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     val todayMap: LiveData<HashMap<String, Any>>
         get() = _todayMap
 
-    private val _todayTip = MutableLiveData(getTip())
-    val todayTip: LiveData<String>
-    get() = _todayTip
-
     init {
         getHistoryData()
     }
@@ -196,8 +192,4 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     }
 
-    private fun getTip(): String {
-        val sharedPref = getApplication<Application>().applicationContext.getSharedPreferences("tip", MODE_PRIVATE)
-        return sharedPref.getString("tip", Tips.tips[0]).toString()
-    }
 }

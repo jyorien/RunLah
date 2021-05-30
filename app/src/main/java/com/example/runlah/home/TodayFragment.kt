@@ -1,5 +1,6 @@
 package com.example.runlah.home
 
+import android.app.Application
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -15,6 +16,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.example.runlah.R
 import com.example.runlah.databinding.FragmentTodayBinding
+import com.example.runlah.util.Tips
 import java.time.LocalDateTime
 
 class TodayFragment : Fragment(), SensorEventListener {
@@ -56,6 +58,7 @@ class TodayFragment : Fragment(), SensorEventListener {
                 displayData(steps = it[stepKey] as Int, distance = it[distanceKey] as Double)
 
         })
+        setTip()
 
         return binding.root
     }
@@ -75,6 +78,12 @@ class TodayFragment : Fragment(), SensorEventListener {
         val stringSteps = "$steps steps"
         binding.todayDistance.text = stringDistance
         binding.todaySteps.text = stringSteps
+    }
+
+    private fun setTip() {
+        val sharedPref = requireContext().getSharedPreferences("tip", Context.MODE_PRIVATE)
+        binding.tipOfDay.text = sharedPref.getString("tip", Tips.tips[0]).toString()
+        Log.i("hello", "tip set")
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
