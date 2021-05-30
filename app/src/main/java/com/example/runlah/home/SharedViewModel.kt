@@ -1,12 +1,14 @@
 package com.example.runlah.home
 
 import android.app.Application
+import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.runlah.dashboard.Record
 import com.example.runlah.util.DateUtil
+import com.example.runlah.util.Tips
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -38,6 +40,10 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     private val _todayMap = MutableLiveData<HashMap<String, Any>>()
     val todayMap: LiveData<HashMap<String, Any>>
         get() = _todayMap
+
+    private val _todayTip = MutableLiveData(getTip())
+    val todayTip: LiveData<String>
+    get() = _todayTip
 
     init {
         getHistoryData()
@@ -188,5 +194,10 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         }
         _todayMap.value = todayMap
 
+    }
+
+    private fun getTip(): String {
+        val sharedPref = getApplication<Application>().applicationContext.getSharedPreferences("tip", MODE_PRIVATE)
+        return sharedPref.getString("tip", Tips.tips[0]).toString()
     }
 }

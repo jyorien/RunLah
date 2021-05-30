@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="sharedViewModel"
+            type="com.example.runlah.home.SharedViewModel" />
     </data>
 
 
@@ -28,7 +30,7 @@
                 android:id="@+id/tip_of_day"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Drink more water"
+                android:text="@{sharedViewModel.todayTip}"
                 android:textSize="20sp"
                 android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"
