@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.view.OrientationEventListener
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
@@ -82,7 +83,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     startActivity(it)
                 }
             }
-            else -> {
+
+            android.R.id.home -> {
                 binding.bottomNav.visibility = View.VISIBLE
 
                 val navController = findNavController(R.id.host_fragment)
@@ -114,8 +116,5 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
 
     }
-
-
-
 
 }

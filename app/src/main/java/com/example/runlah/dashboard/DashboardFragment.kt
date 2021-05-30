@@ -3,11 +3,10 @@ package com.example.runlah.dashboard
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -26,6 +25,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -47,13 +47,16 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // hide up button
+        setHasOptionsMenu(true)
         (activity as MainActivity).supportActionBar!!.title = "Dashboard"
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
         requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility =
             View.VISIBLE
+
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_dashboard, container, false)
         binding.lifecycleOwner = this
+
         viewModel.recordList.observe(viewLifecycleOwner, { list ->
             binding.historyList.adapter = HistoryListAdapter(list) { record ->
                 val action =
@@ -73,6 +76,14 @@ class DashboardFragment : Fragment() {
             val data = getChartData(weeklyTotalDistanceMap, it)
             getChartAppearance()
             prepareChartData(data)
+
+        })
+
+        viewModel.isDeleted.observe(viewLifecycleOwner, { isDeleted ->
+            if (isDeleted) {
+                Snackbar.make(binding.root, "Your running entries have been permanently deleted", Snackbar.LENGTH_LONG).show()
+                viewModel.onCompleteDelete()
+            }
 
         })
         return binding.root
@@ -117,6 +128,38 @@ class DashboardFragment : Fragment() {
         binding.barChart.data = data
         binding.barChart.animateY(500)
         binding.barChart.invalidate()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.delete_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.delete -> showDeleteDialog()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showDeleteDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Delete entries")
+        builder.setMessage("Are you sure you want to delete all entries?")
+        builder.setPositiveButton("Yes") { _, _ ->
+            Toast.makeText(requireContext(), "Yes", Toast.LENGTH_SHORT).show()
+            viewModel.deleteUserRecords()
+        }
+        builder.setNegativeButton("Cancel") { _, _ ->
+            Toast.makeText(requireContext(), "Cancel", Toast.LENGTH_SHORT).show()
+        }
+        val alertDialog = builder.create()
+        alertDialog.setOnShowListener { _ ->
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(requireContext(), R.color.lightRed))
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(requireContext(),R.color.grey))
+        }
+        alertDialog.show()
     }
 
 }

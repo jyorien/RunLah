@@ -3,6 +3,7 @@ package com.example.runlah.home
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,6 +11,7 @@ import com.example.runlah.dashboard.Record
 import com.example.runlah.util.DateUtil
 import com.example.runlah.util.Tips
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -41,6 +43,10 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     val todayMap: LiveData<HashMap<String, Any>>
         get() = _todayMap
 
+    private val _isDeleted = MutableLiveData(false)
+    val isDeleted: LiveData<Boolean>
+    get() = _isDeleted
+
     init {
         getHistoryData()
     }
@@ -53,7 +59,14 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener(MetadataChanges.INCLUDE) { documentSnapshot, e ->
                 // if error, return
-                if (e != null || documentSnapshot == null || documentSnapshot.isEmpty) {
+                if (e != null) {
+                    return@addSnapshotListener
+                }
+                if ( documentSnapshot == null || documentSnapshot.isEmpty) {
+                    val emptyArrayList = arrayListOf<Record>()
+                    _recordList.value = emptyArrayList
+                    getTodayData(emptyArrayList)
+                    getWeeklyDistance(emptyArrayList)
                     return@addSnapshotListener
                 }
 
@@ -63,6 +76,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
                 val recordList = arrayListOf<Record>()
 
                 documentSnapshot.forEach { document ->
+                    Log.i("hello", document.id)
                     val docData = document.data
                     val time = docData["timestamp"] as Timestamp
                     val date = DateUtil.getDateInLocalDateTime(time)
@@ -137,6 +151,22 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
             }
 
+    }
+
+    fun deleteUserRecords() {
+        val docRef =
+            mFirestore.collection("users").document(mAuth.currentUser!!.uid).collection("records")
+        docRef.get().addOnSuccessListener { snapshot ->
+            snapshot.forEach { document ->
+                Log.i("hello", " deleted ${document.id}")
+                document.reference.delete()
+            }
+            _isDeleted.value = true
+        }
+    }
+
+    fun onCompleteDelete() {
+        _isDeleted.value = false
     }
 
     private fun getWeeklyDistance(givenList: ArrayList<Record>) {

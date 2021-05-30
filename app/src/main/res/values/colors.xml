@@ -14,4 +14,7 @@
   <color name="primaryTransparentColor">#97d98f95</color>
   <color name="secondaryThemeColor">#f2e4df</color>
   <color name="white">#F6F6F6</color>
+  <color name="red">#AF0000</color>
+  <color name="lightRed">#CC0E0E</color>
+  <color name="grey">#A6A6A6</color>
 </resources>
