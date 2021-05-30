@@ -118,7 +118,7 @@
             android:text=""
             android:layout_marginLeft="10dp"
             android:textSize="40sp"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/temperatureText"
             app:layout_constraintStart_toEndOf="@+id/temperatureText"
             app:layout_constraintTop_toTopOf="@+id/temperatureText" />
@@ -131,7 +131,7 @@
             android:layout_marginTop="24dp"
             android:text="Temperature"
             android:textSize="30sp"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
