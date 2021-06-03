@@ -6,11 +6,15 @@ import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.util.Log
 
-class DailyReceiver: BroadcastReceiver() {
+class DailyReceiver : BroadcastReceiver() {
+    val ALARM_ID = 9999
     override fun onReceive(context: Context?, intent: Intent?) {
-            var newTip = Tips.getTip()
-            val sharedPref = context?.getSharedPreferences("tip",MODE_PRIVATE)
-            if (sharedPref?.getString("tip","") == newTip) newTip = Tips.getTip()
-            sharedPref?.edit()?.putString("tip", newTip)?.apply()
+        var newTip = Tips.getTip()
+        val sharedPref = context?.getSharedPreferences("tip", MODE_PRIVATE)
+        if (sharedPref?.getString("tip", "") == newTip) newTip = Tips.getTip()
+        sharedPref?.edit()?.putString("tip", newTip)?.apply()
+        if (context != null) {
+            DailyAlarm.setAlarm(context, ALARM_ID)
+        }
     }
 }

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.runlah.util.DailyAlarm
 import com.example.runlah.util.DailyReceiver
 import java.util.*
 
@@ -26,36 +27,13 @@ class App: Application() {
         val sharedPref2 = getSharedPreferences("isNotFirstRun", MODE_PRIVATE)
         val isNotFirstRun = sharedPref2.getBoolean("isNotFirstRun", false)
         if (!isNotFirstRun) {
-            setAlarm()
+            DailyAlarm.setAlarm(applicationContext, ALARM_ID)
             sharedPref2.edit().putBoolean("isNotFirstRun", true).apply()
         }
         Log.i("hello" ,"isNotFirstRun ${sharedPref2.getBoolean("isNotFirstRun", false)}" )
 //        cancelAlarm()
 //        sharedPref2.edit().putBoolean("isNotFirstRun", false).apply()
 
-    }
-
-    private fun setAlarm() {
-        val scheduledCalendar = Calendar.getInstance()
-        scheduledCalendar.set(Calendar.HOUR_OF_DAY, 0)
-        scheduledCalendar.set(Calendar.MINUTE, 0)
-        scheduledCalendar.set(Calendar.SECOND, 0)
-        scheduledCalendar.set(Calendar.MILLISECOND, 0)
-
-        val currentCalendar = Calendar.getInstance()
-
-        if (currentCalendar.after(scheduledCalendar))
-            scheduledCalendar.add(Calendar.DATE, 1)
-
-        Intent(applicationContext, DailyReceiver::class.java).also {
-
-            val pendingIntent = PendingIntent.getBroadcast(applicationContext, ALARM_ID, it, PendingIntent.FLAG_UPDATE_CURRENT)
-            val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, scheduledCalendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
-            Log.i("hello", "alarm set")
-            Log.i("hello", currentCalendar.time.toString())
-            Log.i("hello", scheduledCalendar.time.toString())
-        }
     }
 
     private fun cancelAlarm() {

@@ -1,8 +1,8 @@
 package com.example.runlah.dashboard
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -17,7 +17,7 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -67,7 +67,7 @@ class DashboardFragment : Fragment() {
 
         viewModel.xAxisValues.observe(viewLifecycleOwner, {
             val data = getChartData(weeklyTotalDistanceMap, it)
-            getChartAppearance()
+            getChartAppearance(it)
             prepareChartData(data)
 
         })
@@ -97,10 +97,12 @@ class DashboardFragment : Fragment() {
         return binding.root
     }
 
-    private fun getChartAppearance() {
-        binding.barChart.xAxis.valueFormatter = object : ValueFormatter() {
-            override fun getFormattedValue(value: Float): String = value.toInt().toString()
+    private fun getChartAppearance(xAxisValues: ArrayList<Int>) {
+        val newList = arrayListOf<String>()
+        xAxisValues.forEach {
+            newList.add(it.toString())
         }
+        binding.barChart.xAxis.valueFormatter = IndexAxisValueFormatter(newList)
         binding.barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         binding.barChart.description.isEnabled = false
         binding.barChart.axisLeft.granularity = 10f
@@ -115,14 +117,22 @@ class DashboardFragment : Fragment() {
 
     private fun getChartData(map: Map<Int, Double>, xAxisList: ArrayList<Int>): BarData {
         val values = arrayListOf<BarEntry>()
+        val yAxisValuesList = arrayListOf<Double>()
+        for (day in xAxisList) {
 
-        for (i in xAxisList) {
-            var coordinates = BarEntry(i.toFloat(), 0f)
-            if (map.keys.contains(i)) {
-                val y = map[i]
-
-                coordinates = BarEntry(i.toFloat(), (y!!).roundToInt().toFloat())
+            if (map[day] == null) {
+                yAxisValuesList.add(0.0)
             }
+            else
+                yAxisValuesList.add(map[day] as Double)
+        }
+        // force the x axis to be spaced evenly, rename the labels in IndexAxisValueFormatter
+        for (i in 0..6) {
+            val coordinates = BarEntry(i.toFloat(), yAxisValuesList[i].roundToInt().toFloat())
+//            if (map.keys.contains(i)) {
+//                val y = map[i]
+//                coordinates = BarEntry(i.toFloat(), (y!!).roundToInt().toFloat())
+//            }
             values.add(coordinates)
         }
         val set1 = BarDataSet(values, "Distance (m)")

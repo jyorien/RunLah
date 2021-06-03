@@ -188,10 +188,14 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun getWeeklyDistance(givenList: ArrayList<Record>) {
         // populate bar chart data
+
+        // sort dates in chronological order
         val list = givenList.sortedBy { it.rawDate }
         val distanceMap = hashMapOf<Int, Double>()
         val xAxisList = arrayListOf<Int>()
+        // loop through each entry
         list.forEach { record ->
+            // entry must at most be 7 days old
             if (record.rawDate.isAfter(currentDate.minusDays(6))) {
 
                 val key = record.rawDate.dayOfMonth
@@ -206,8 +210,10 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         _weeklyDistanceMap.value = distanceMap.toSortedMap(reverseOrder())
 
         // populate x axis list
-        for (i in currentDate.minusDays(6).dayOfMonth..currentDate.dayOfMonth) {
-            xAxisList.add(i)
+        var dateCount = currentDate.minusDays(6)
+        while (!dateCount.isAfter(currentDate)) {
+            xAxisList.add(dateCount.dayOfMonth)
+            dateCount = dateCount.plusDays(1)
         }
         _xAxisValues.value = xAxisList
     }
