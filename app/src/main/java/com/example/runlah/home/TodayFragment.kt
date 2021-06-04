@@ -81,8 +81,8 @@ class TodayFragment : Fragment(), SensorEventListener {
     }
 
     private fun setTip() {
-        val sharedPref = requireContext().getSharedPreferences("tip", Context.MODE_PRIVATE)
-        binding.tipOfDay.text = sharedPref.getString("tip", Tips.tips[0]).toString()
+        val sharedPref = requireContext().getSharedPreferences(getString(R.string.tip), Context.MODE_PRIVATE)
+        binding.tipOfDay.text = sharedPref.getString(getString(R.string.tip), Tips.tips[0]).toString()
         Log.i("hello", "tip set")
     }
 

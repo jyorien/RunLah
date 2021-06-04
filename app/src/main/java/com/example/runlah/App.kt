@@ -1,18 +1,14 @@
 package com.example.runlah
 
-import android.app.AlarmManager
 import android.app.Application
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.runlah.util.DailyAlarm
-import com.example.runlah.util.DailyReceiver
-import java.util.*
+import com.example.runlah.util.Tips
+import java.time.LocalDateTime
 
-class App: Application() {
-    val ALARM_ID = 9999
+
+class App : Application() {
+
 
     override fun onCreate() {
         super.onCreate()
@@ -23,28 +19,34 @@ class App: Application() {
         else
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-
-        val sharedPref2 = getSharedPreferences("isNotFirstRun", MODE_PRIVATE)
-        val isNotFirstRun = sharedPref2.getBoolean("isNotFirstRun", false)
-        if (!isNotFirstRun) {
-            DailyAlarm.setAlarm(applicationContext, ALARM_ID)
-            sharedPref2.edit().putBoolean("isNotFirstRun", true).apply()
-        }
-        Log.i("hello" ,"isNotFirstRun ${sharedPref2.getBoolean("isNotFirstRun", false)}" )
-//        cancelAlarm()
-//        sharedPref2.edit().putBoolean("isNotFirstRun", false).apply()
-
+        setNewTip()
     }
 
-    private fun cancelAlarm() {
-        Intent(applicationContext, DailyReceiver::class.java).also {
-            val pendingIntent = PendingIntent.getBroadcast(
-                applicationContext, ALARM_ID, it, PendingIntent.FLAG_UPDATE_CURRENT
-            )
-            val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarmManager.cancel(pendingIntent)
-            Log.i("hello", "alarm cancelled")
-        }
+    private fun setNewTip() {
+        val lastDate = LocalDateTime.now()
+        val todayDay = lastDate.dayOfMonth
+        val todayMonth = lastDate.monthValue
+        val todayYear = lastDate.year
+        val todaySharedPref = getSharedPreferences(getString(R.string.today_date), MODE_PRIVATE)
 
+        val tipSharedPref = getSharedPreferences(getString(R.string.tip), MODE_PRIVATE)
+        if (!todaySharedPref.contains(getString(R.string.today_day))) {
+            todaySharedPref.edit().putInt(getString(R.string.today_day),todayDay).apply()
+            todaySharedPref.edit().putInt(getString(R.string.today_month),todayMonth).apply()
+            todaySharedPref.edit().putInt(getString(R.string.today_year),todayYear).apply()
+            tipSharedPref.edit().putString(getString(R.string.tip), Tips.getTip()).apply()
+            return
+        }
+        val storedDay = todaySharedPref.getInt(getString(R.string.today_day), 0)
+        val storedMonth = todaySharedPref.getInt(getString(R.string.today_month), 0)
+        val storedYear = todaySharedPref.getInt(getString(R.string.today_year), 0)
+        val storedTip = tipSharedPref.getString(getString(R.string.tip), "")
+        if (storedDay != todayDay || storedMonth != todayMonth || storedYear != todayYear) {
+            var newTip = Tips.getTip()
+            if (newTip == storedTip)
+                newTip = Tips.getTip()
+            tipSharedPref.edit().putString(getString(R.string.tip), newTip).apply()
+        }
     }
+
 }
