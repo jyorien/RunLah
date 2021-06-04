@@ -5,6 +5,7 @@ import java.io.Serializable
 import java.time.LocalDateTime
 
 data class Record(
+    val documentId: String = "",
     val formattedDate: String = "",
     val distance: String = "0",
     val timeTaken: String = "0",

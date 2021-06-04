@@ -15,4 +15,10 @@
     <string name="steps">Steps</string>
     <string name="history">History</string>
     <string name="dark_mode_string">isDark</string>
+    <string name="delete">Delete</string>
+    <string name="today_date">today_date</string>
+    <string name="today_day">today_day</string>
+    <string name="today_month">today_month</string>
+    <string name="today_year">today_year</string>
+    <string name="tip">tip</string>
 </resources>

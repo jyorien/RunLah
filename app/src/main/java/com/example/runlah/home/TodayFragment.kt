@@ -1,5 +1,6 @@
 package com.example.runlah.home
 
+import android.app.Application
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -15,6 +16,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.example.runlah.R
 import com.example.runlah.databinding.FragmentTodayBinding
+import com.example.runlah.util.Tips
 import java.time.LocalDateTime
 
 class TodayFragment : Fragment(), SensorEventListener {
@@ -41,7 +43,6 @@ class TodayFragment : Fragment(), SensorEventListener {
     ): View? {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_today, container, false)
-
         (activity as MainActivity).supportActionBar!!.title = "Today"
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
         if (surroundingTemperatureSensor != null) {
@@ -50,6 +51,7 @@ class TodayFragment : Fragment(), SensorEventListener {
                 temperatureText.visibility = View.VISIBLE
             }
         }
+        binding.sharedViewModel = viewModel
         binding.lifecycleOwner = this
         viewModel.todayMap.observe(viewLifecycleOwner, {
             if (it[stepKey] != null && it[distanceKey] != null)

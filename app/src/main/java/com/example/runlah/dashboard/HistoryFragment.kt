@@ -79,7 +79,7 @@ class HistoryFragment : Fragment() {
         return binding.root
     }
 
-    fun displayImage() {
+    private fun displayImage() {
         val storage = FirebaseStorage.getInstance()
         val auth = FirebaseAuth.getInstance()
         val ONE_MEGABYTE: Long = 1024 * 1024
