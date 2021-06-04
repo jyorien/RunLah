@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.runlah.R
 import com.example.runlah.dashboard.Record
 import com.example.runlah.util.DateUtil
 import com.example.runlah.util.Tips
@@ -52,7 +53,8 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     val isSingleDeleted: LiveData<Boolean>
         get() = _isSingleDeleted
 
-    private val _tip = MutableLiveData<String>(application.getSharedPreferences("tip", MODE_PRIVATE).getString("tip", Tips.getTip()))
+    private val _tip = MutableLiveData<String>(application.getSharedPreferences(application.getString(
+        R.string.tip), MODE_PRIVATE).getString(application.getString(R.string.tip), Tips.getTip()))
     val tip: LiveData<String>
         get() = _tip
 
