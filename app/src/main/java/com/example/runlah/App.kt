@@ -47,6 +47,9 @@ class App : Application() {
             if (newTip == storedTip)
                 newTip = Tips.getTip()
             tipSharedPref.edit().putString(getString(R.string.tip), newTip).apply()
+            todaySharedPref.edit().putInt(getString(R.string.today_day),todayDay).apply()
+            todaySharedPref.edit().putInt(getString(R.string.today_month),todayMonth).apply()
+            todaySharedPref.edit().putInt(getString(R.string.today_year),todayYear).apply()
         }
     }
 
