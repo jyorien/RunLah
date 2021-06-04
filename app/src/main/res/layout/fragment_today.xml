@@ -30,7 +30,7 @@
                 android:id="@+id/tip_of_day"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text=""
+                android:text="@{sharedViewModel.tip}"
                 android:textSize="20sp"
                 android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"

@@ -23,6 +23,7 @@ class App : Application() {
     }
 
     private fun setNewTip() {
+        // temporary solution for daily tips
         val lastDate = LocalDateTime.now()
         val todayDay = lastDate.dayOfMonth
         val todayMonth = lastDate.monthValue

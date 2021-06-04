@@ -58,7 +58,6 @@ class TodayFragment : Fragment(), SensorEventListener {
                 displayData(steps = it[stepKey] as Int, distance = it[distanceKey] as Double)
 
         })
-        setTip()
 
         return binding.root
     }
@@ -78,12 +77,6 @@ class TodayFragment : Fragment(), SensorEventListener {
         val stringSteps = "$steps steps"
         binding.todayDistance.text = stringDistance
         binding.todaySteps.text = stringSteps
-    }
-
-    private fun setTip() {
-        val sharedPref = requireContext().getSharedPreferences(getString(R.string.tip), Context.MODE_PRIVATE)
-        binding.tipOfDay.text = sharedPref.getString(getString(R.string.tip), Tips.tips[0]).toString()
-        Log.i("hello", "tip set")
     }
 
     override fun onSensorChanged(event: SensorEvent?) {

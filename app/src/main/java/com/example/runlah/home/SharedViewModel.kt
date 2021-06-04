@@ -2,6 +2,7 @@ package com.example.runlah.home
 
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
@@ -50,6 +51,10 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     private val _isSingleDeleted = MutableLiveData(false)
     val isSingleDeleted: LiveData<Boolean>
         get() = _isSingleDeleted
+
+    private val _tip = MutableLiveData<String>(application.getSharedPreferences("tip", MODE_PRIVATE).getString("tip", Tips.getTip()))
+    val tip: LiveData<String>
+        get() = _tip
 
     init {
         getHistoryData()
