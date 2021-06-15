@@ -1,9 +1,12 @@
 package com.example.runlah.dashboard
 
+import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.time.LocalDateTime
 
+@Parcelize
 data class Record(
     val documentId: String = "",
     val formattedDate: String = "",
@@ -16,4 +19,4 @@ data class Record(
     val rawDate: LocalDateTime,
     val rawDistance: Double,
     val rawSteps: Int
-): Serializable
+): Parcelable
