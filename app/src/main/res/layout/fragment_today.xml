@@ -19,7 +19,7 @@
             android:id="@+id/constraintLayout3"
             android:layout_width="350dp"
             android:layout_height="100dp"
-            android:layout_marginTop="116dp"
+            android:layout_marginTop="100dp"
             android:elevation="5dp"
             android:background="@drawable/today_summary_background"
             app:layout_constraintEnd_toEndOf="parent"
@@ -112,30 +112,44 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-        <TextView
-            android:id="@+id/ambientTemperature"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/temperatureConstraint"
+            android:layout_width="350dp"
             android:layout_height="wrap_content"
-            android:text=""
-            android:layout_marginLeft="10dp"
-            android:textSize="40sp"
+            android:paddingVertical="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/temperatureText"
-            app:layout_constraintStart_toEndOf="@+id/temperatureText"
-            app:layout_constraintTop_toTopOf="@+id/temperatureText" />
-
-        <TextView
-            android:id="@+id/temperatureText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="24dp"
-            android:text="Temperature"
-            android:textSize="30sp"
-            android:visibility="invisible"
+            android:background="@drawable/today_summary_background"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/temperatureText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginBottom="4dp"
+                android:text="Temperature"
+                android:textSize="30sp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/ambientTemperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="40sp"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.243"
+                app:layout_constraintStart_toEndOf="@+id/temperatureText"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
         <Button
             android:id="@+id/btn_go_run"

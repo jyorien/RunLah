@@ -50,6 +50,7 @@ class TodayFragment : Fragment(), SensorEventListener {
             binding.apply {
                 ambientTemperature.visibility = View.VISIBLE
                 temperatureText.visibility = View.VISIBLE
+                temperatureConstraint.visibility = View.VISIBLE
             }
         }
         binding.sharedViewModel = viewModel
