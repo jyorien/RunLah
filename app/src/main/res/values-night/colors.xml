@@ -12,4 +12,5 @@
   <color name="invertedTextColor">#F6F6F6</color>
   <color name="primaryTransparentColor">#97424242</color>
   <color name="secondaryThemeColor">#a3666a</color>
+  <color name="tileColor">#353535</color>
 </resources>

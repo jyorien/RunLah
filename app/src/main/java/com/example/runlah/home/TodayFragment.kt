@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.example.runlah.R
 import com.example.runlah.databinding.FragmentTodayBinding
 import com.example.runlah.util.Tips
@@ -58,8 +59,13 @@ class TodayFragment : Fragment(), SensorEventListener {
                 displayData(steps = it[stepKey] as Int, distance = it[distanceKey] as Double)
 
         })
+        binding.btnGoRun.setOnClickListener { goToRun() }
 
         return binding.root
+    }
+
+    private fun goToRun() {
+        findNavController().navigate(TodayFragmentDirections.actionTodayFragmentToRecordFragment())
     }
 
     override fun onResume() {

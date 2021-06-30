@@ -9,7 +9,11 @@
         android:id="@+id/today_fragment"
         android:name="com.example.runlah.home.TodayFragment"
         android:label="fragment_today"
-        tools:layout="@layout/fragment_today" />
+        tools:layout="@layout/fragment_today" >
+        <action
+            android:id="@+id/action_today_fragment_to_record_fragment"
+            app:destination="@id/record_fragment" />
+    </fragment>
     <fragment
         android:id="@+id/dashboard_fragment"
         android:name="com.example.runlah.dashboard.DashboardFragment"
