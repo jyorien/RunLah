@@ -117,6 +117,7 @@
             android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:paddingVertical="5dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             android:visibility="invisible"
             android:background="@drawable/today_summary_background"
