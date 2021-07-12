@@ -12,6 +12,8 @@ import androidx.databinding.DataBindingUtil
 import com.example.runlah.R
 import com.example.runlah.databinding.ActivitySettingsBinding
 import com.example.runlah.login.LoginActivity
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 
 class SettingsActivity : AppCompatActivity() {
@@ -37,6 +39,12 @@ class SettingsActivity : AppCompatActivity() {
         }
         binding.logOut.setOnClickListener {
             val auth = FirebaseAuth.getInstance()
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("345768625554-7gs5b5n5orcefkls5t6sr2pn65t8ajlk.apps.googleusercontent.com")
+                .requestEmail()
+                .build();
+            val googleSignInClient = GoogleSignIn.getClient(this, gso)
+            googleSignInClient.signOut()
             auth.signOut()
             Intent(this, LoginActivity::class.java).also { intent ->
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

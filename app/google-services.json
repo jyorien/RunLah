@@ -14,6 +14,43 @@
       },
       "oauth_client": [
         {
+          "client_id": "345768625554-08i209r10ur3r6787jle8q11rf7clm59.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.runlah",
+            "certificate_hash": "7d94744a6360f8b2796cd84096c469c8e0e4a1eb"
+          }
+        },
+        {
+          "client_id": "345768625554-7gs5b5n5orcefkls5t6sr2pn65t8ajlk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKFDsH71SbTnXrtey6XGqEd79UKLmUBV0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "345768625554-7gs5b5n5orcefkls5t6sr2pn65t8ajlk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345768625554:android:007fa9716a311b3679ad4b",
+        "android_client_info": {
+          "package_name": "com.example.runlah_flutter"
+        }
+      },
+      "oauth_client": [
+        {
           "client_id": "345768625554-7gs5b5n5orcefkls5t6sr2pn65t8ajlk.apps.googleusercontent.com",
           "client_type": 3
         }
