@@ -39,6 +39,7 @@ class SettingsActivity : AppCompatActivity() {
             val auth = FirebaseAuth.getInstance()
             auth.signOut()
             Intent(this, LoginActivity::class.java).also { intent ->
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
             }
         }
